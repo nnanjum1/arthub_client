@@ -34,7 +34,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <div className="relative w-full h-[80vh] overflow-hidden">
+        <div className="relative w-[90%] mx-auto h-[80vh] mb-5 ">
 
             {slides.map((slide, i) => (
                 <div
