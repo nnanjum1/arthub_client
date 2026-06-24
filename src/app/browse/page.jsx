@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import ArtworkSkeleton from "../components/ArtworkSkeleton";
 
 const BrowseArtworks = () => {
     const [artworks, setArtworks] = useState([]);
@@ -155,18 +156,7 @@ const BrowseArtworks = () => {
             {loading && (
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                     {[...Array(8)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="animate-pulse bg-white border rounded-xl overflow-hidden"
-                        >
-                            <div className="h-56 bg-slate-200"></div>
-
-                            <div className="p-4 space-y-3">
-                                <div className="h-4 bg-slate-200 rounded"></div>
-                                <div className="h-4 bg-slate-200 rounded"></div>
-                                <div className="h-4 bg-slate-200 rounded"></div>
-                            </div>
-                        </div>
+                        <ArtworkSkeleton key={i} />
                     ))}
                 </div>
             )}
