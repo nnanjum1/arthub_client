@@ -13,15 +13,12 @@ const RegisterPage = () => {
     const [errors, setErrors] = useState({});
 
     const handleGoogleSignIn = async () => {
-        try {
-            await authClient.signIn.social({
-                provider: "google",
-                callbackURL: "/",
-            });
-        } catch (error) {
-            console.error(error);
-            toast.error("Google sign in failed");
-        }
+
+        await authClient.signIn.social({
+            provider: "google",
+
+        });
+
     };
 
     const handleSubmit = async (e) => {

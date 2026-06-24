@@ -48,10 +48,13 @@ const LoginPage = () => {
             }
 
             if (data) {
-                toast.success("Login successful!");
-                e.target.reset();
-                setErrors({});
-                router.push("/");
+                if (data) {
+                    toast.success("Login successful!");
+                    e.target.reset();
+
+                    router.refresh();
+                    router.push("/");
+                }
             }
         } catch (err) {
             console.error(err);
@@ -60,15 +63,9 @@ const LoginPage = () => {
     };
 
     const handleGoogleLogin = async () => {
-        try {
-            await authClient.signIn.social({
-                provider: "google",
-                callbackURL: "/",
-            });
-        } catch (error) {
-            console.error(error);
-            toast.error("Google login failed");
-        }
+        await authClient.signIn.social({
+            provider: "google",
+        });
     };
 
     return (

@@ -4,18 +4,32 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { FaCircleUser, FaRegCircleUser, FaRegUser } from "react-icons/fa6";
+import { toast } from "react-toastify";
+import { HiUserCircle } from "react-icons/hi";
 
 export default function Navbar() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
 
-    const user = false;
+    const { data: session } = authClient.useSession();
+    console.log(session)
+
+    const user = session?.user;
+    const handleLogout = async () => {
+        await authClient.signOut();
+
+        toast.success("Logged out successfully");
+    };
 
     const isActive = (path) =>
         pathname === path
             ? "text-teal-600 font-semibold"
             : "text-slate-700 hover:text-teal-600 transition";
+
+
 
     return (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
@@ -43,33 +57,28 @@ export default function Navbar() {
                     {user ? (
                         <div className="relative flex items-center gap-3">
 
-                            <Link href="/dashboard" className={isActive("/dashboard")}>
+                            <Link
+                                href={
+                                    user?.role === "artist"
+                                        ? "/dashboard/artist"
+                                        : "/dashboard/user"
+                                }
+                                className={isActive(
+                                    user?.role === "artist"
+                                        ? "/dashboard/artist"
+                                        : "/dashboard/user"
+                                )}
+                            >
                                 Dashboard
                             </Link>
 
-                            <button
-                                onClick={() => setProfileOpen(!profileOpen)}
-                                className="w-10 h-10 rounded-full bg-indigo-950 text-white flex items-center justify-center"
-                            >
-                                👤
-                            </button>
 
-                            <button className="px-4 py-1.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
+
+                            <button onClick={handleLogout} className="px-4 py-1.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
                                 Logout
                             </button>
 
-                            {profileOpen && (
-                                <div className="absolute right-0 top-12 w-44 bg-white border rounded-md shadow-md overflow-hidden">
 
-                                    <Link
-                                        href="/profile"
-                                        className="block px-4 py-2 hover:bg-slate-50"
-                                    >
-                                        Edit Profile
-                                    </Link>
-
-                                </div>
-                            )}
                         </div>
                     ) : (
                         <div className="flex items-center gap-3">
@@ -113,28 +122,19 @@ export default function Navbar() {
 
                     {user ? (
                         <>
-                            <Link href="/dashboard" className={isActive("/dashboard")}>
+                            <Link
+                                href={
+                                    user?.role === "artist"
+                                        ? "/dashboard/artist"
+                                        : "/dashboard/user"
+                                }
+                            >
                                 Dashboard
                             </Link>
 
-                            <button
-                                onClick={() => setProfileOpen(!profileOpen)}
-                                className="text-left flex items-center justify-between w-full"
-                            >
-                                Profile
-                                <span>{profileOpen ? "▲" : "▼"}</span>
-                            </button>
 
-                            {profileOpen && (
-                                <Link
-                                    href="/profile"
-                                    className="ml-3 text-slate-700 hover:text-teal-600"
-                                >
-                                    Edit Profile
-                                </Link>
-                            )}
 
-                            <button className="text-red-500 text-left">
+                            <button onClick={handleLogout} className="text-red-500 text-left">
                                 Logout
                             </button>
                         </>
