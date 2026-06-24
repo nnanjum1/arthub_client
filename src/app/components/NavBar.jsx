@@ -12,7 +12,6 @@ import { HiUserCircle } from "react-icons/hi";
 export default function Navbar() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [profileOpen, setProfileOpen] = useState(false);
 
     const { data: session } = authClient.useSession();
     console.log(session)
