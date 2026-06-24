@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { FaCircleUser, FaRegCircleUser, FaRegUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
 export default function Navbar() {

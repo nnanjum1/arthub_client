@@ -6,11 +6,14 @@ import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const redirect = searchParams.get("redirect") || "/";
 
     const [errors, setErrors] = useState({});
 
@@ -52,8 +55,7 @@ const LoginPage = () => {
                     toast.success("Login successful!");
                     e.target.reset();
 
-                    router.refresh();
-                    router.push("/");
+                    router.push(redirect);
                 }
             }
         } catch (err) {

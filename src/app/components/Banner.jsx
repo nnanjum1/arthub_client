@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const slides = [
     {
-        image: "/assets/hero.jpeg",
+        image: "/assets/art.jpg",
         title: "Discover & Buy Original Art",
         desc: "Explore unique digital and traditional artworks from talented artists.",
     },
@@ -34,12 +34,14 @@ export default function Hero() {
     }, []);
 
     return (
-        <div className="relative w-[90%] mx-auto h-[80vh] mb-5 ">
+        <div className="relative w-[90%] mx-auto h-[80vh] mb-5 overflow-hidden">
 
             {slides.map((slide, i) => (
                 <div
                     key={i}
-                    className={`absolute inset-0 transition-opacity duration-700 ${i === index ? "opacity-100" : "opacity-0"
+                    className={`absolute inset-0 transition-opacity duration-700 ${i === index
+                        ? "opacity-100 pointer-events-auto"
+                        : "opacity-0 pointer-events-none"
                         }`}
                 >
 
