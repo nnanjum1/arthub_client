@@ -64,7 +64,7 @@ const LoginPage = () => {
 
                 <form className="flex flex-col gap-4">
 
-                    {/* Email */}
+
                     <div>
                         <input
                             type="email"
@@ -81,7 +81,7 @@ const LoginPage = () => {
                         )}
                     </div>
 
-                    {/* Password */}
+
                     <div className="relative">
 
                         <input
@@ -109,7 +109,7 @@ const LoginPage = () => {
 
                     </div>
 
-                    {/* Login Button */}
+
                     <button
                         type="button"
                         onClick={handleLogin}
