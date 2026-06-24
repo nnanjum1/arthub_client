@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { FaCircleUser, FaRegCircleUser, FaRegUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
-import { HiUserCircle } from "react-icons/hi";
 
 export default function Navbar() {
     const pathname = usePathname();
