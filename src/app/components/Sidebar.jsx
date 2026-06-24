@@ -19,6 +19,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             path: "/dashboard/artist",
             icon: <FaPaintBrush />,
         },
+
+        {
+            name: "My Artworks",
+            path: "/dashboard/artist/artworks",
+            icon: <FaPaintBrush />,
+        },
         {
             name: "Add Artwork",
             path: "/dashboard/artist/add-artwork",
