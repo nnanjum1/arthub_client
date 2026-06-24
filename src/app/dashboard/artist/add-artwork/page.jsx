@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 const AddArtwork = () => {
+    const [preview, setPreview] = useState("");
     const [image, setImage] = useState(null);
     const { data: session } = authClient.useSession();
     console.log(session)
@@ -78,12 +79,20 @@ const AddArtwork = () => {
 
             e.target.reset();
             setImage(null);
+            setPreview("");
         } catch (error) {
             console.error(error);
             toast.error("Failed to add artwork");
         }
     };
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
 
+        if (file) {
+            setImage(file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
     return (
         <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
 
@@ -159,24 +168,33 @@ const AddArtwork = () => {
                         Artwork Image
                     </label>
 
+                    {preview && (
+                        <div className="mb-4">
+                            <img
+                                src={preview}
+                                alt="Preview"
+                                className="w-48 h-48 object-cover rounded-lg border"
+                            />
+                        </div>
+                    )}
+
                     <input
                         type="file"
                         accept="image/*"
                         required
-                        onChange={(e) => setImage(e.target.files[0])}
+                        onChange={handleImageChange}
                         className="
         w-full text-sm text-slate-500
         file:mr-4
         file:px-5
         file:py-2.5
         file:rounded-lg
-        file:bg-sky-600
+        file:bg-sky-500
         file:text-white
         file:border-0
         file:font-semibold
         file:cursor-pointer
-        hover:file:bg-sky-500
-    "
+        "
                     />
                 </div>
 
