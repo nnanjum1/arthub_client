@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import DeleteModal from "@/app/components/DeleteModal";
 
 const ArtworkDetails = () => {
     const { id } = useParams();
@@ -13,7 +14,7 @@ const ArtworkDetails = () => {
 
     const [artwork, setArtwork] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const { data: session } = authClient.useSession();
 
     const user = session?.user;
@@ -90,6 +91,33 @@ const ArtworkDetails = () => {
         );
     }
 
+
+    const handleDelete = async () => {
+        try {
+            const res = await fetch(
+                `http://localhost:5000/artworks/${artwork._id}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            const data = await res.json();
+
+            if (data.deletedCount > 0) {
+                toast.success("Artwork deleted successfully");
+
+                setShowDeleteModal(false);
+
+                router.push("/browse");
+            } else {
+                toast.error("Failed to delete artwork");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong");
+        }
+    };
+
     return (
         <div className="w-[90%] mx-auto py-10">
 
@@ -138,6 +166,7 @@ const ArtworkDetails = () => {
                     <h2 className="text-3xl font-bold text-teal-600">
                         ${artwork.price}
                     </h2>
+                    <p>{artwork.availability}</p>
 
                     <div className="mt-8">
 
@@ -204,7 +233,7 @@ const ArtworkDetails = () => {
                                 </Link>
 
                                 <button
-                                    // onClick={handleDelete}
+                                    onClick={() => setShowDeleteModal(true)}
                                     className="bg-pink-800 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
                                 >
                                     Delete Artwork
@@ -223,9 +252,18 @@ const ArtworkDetails = () => {
 
 
             </div>
+            <DeleteModal
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+            />
 
         </div>
+
+
     );
+
+
 };
 
 export default ArtworkDetails;
