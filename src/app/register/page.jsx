@@ -3,49 +3,89 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
+import { FcGoogle } from "react-icons/fc";
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "",
-    });
-
     const [errors, setErrors] = useState({});
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleGoogleSignIn = async () => {
+        try {
+            await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Google sign in failed");
+        }
     };
 
-    const handleRegister = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const user = Object.fromEntries(formData.entries());
 
         let newErrors = {};
 
-        if (!form.name) newErrors.name = "Name is required";
-        if (!form.email) newErrors.email = "Email is required";
-        if (!form.password) newErrors.password = "Password is required";
-        if (!form.confirmPassword)
-            newErrors.confirmPassword = "Confirm password is required";
-        if (!form.role) newErrors.role = "Please select a role";
+        if (!user.name?.trim()) {
+            newErrors.name = "Name is required";
+        }
 
-        if (
-            form.password &&
-            form.confirmPassword &&
-            form.password !== form.confirmPassword
-        ) {
+        if (!user.email?.trim()) {
+            newErrors.email = "Email is required";
+        }
+
+        if (!user.password) {
+            newErrors.password = "Password is required";
+        } else {
+            const passwordRegex =
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+            if (!passwordRegex.test(user.password)) {
+                newErrors.password =
+                    "Password must be at least 6 characters and contain at least one uppercase letter, one lowercase letter, and one number";
+            }
+        }
+
+        if (!user.confirmPassword) {
+            newErrors.confirmPassword = "Confirm password is required";
+        } else if (user.password !== user.confirmPassword) {
             newErrors.confirmPassword = "Passwords do not match";
         }
 
+
         setErrors(newErrors);
 
-        if (Object.keys(newErrors).length === 0) {
-            console.log("Register success (frontend only)", form);
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+
+        try {
+            const { data, error } = await authClient.signUp.email({
+                email: user.email.trim(),
+                password: user.password,
+                name: user.name.trim(),
+                role: user.role,
+            });
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+
+            console.log(data);
+            toast.success("Registration successful!");
+
+            e.target.reset();
+            setErrors({});
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong");
         }
     };
 
@@ -62,14 +102,14 @@ const RegisterPage = () => {
                     Join ArtHub and start exploring artworks
                 </p>
 
-                <form onSubmit={handleRegister} className="flex flex-col gap-4 mt-6">
-
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
                     <div>
                         <input
                             type="text"
                             name="name"
+
                             placeholder="Full Name"
-                            onChange={handleChange}
+
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
                         {errors.name && (
@@ -82,8 +122,10 @@ const RegisterPage = () => {
                         <input
                             type="email"
                             name="email"
+
+
                             placeholder="Email"
-                            onChange={handleChange}
+
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
                         {errors.email && (
@@ -95,15 +137,17 @@ const RegisterPage = () => {
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
+
+
                             placeholder="Password"
-                            onChange={handleChange}
+
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
 
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-500"
+                            className="absolute right-3 top-4 text-gray-500"
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
@@ -117,15 +161,17 @@ const RegisterPage = () => {
                         <input
                             type={showConfirm ? "text" : "password"}
                             name="confirmPassword"
+
+
                             placeholder="Confirm Password"
-                            onChange={handleChange}
+
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
 
                         <button
                             type="button"
                             onClick={() => setShowConfirm(!showConfirm)}
-                            className="absolute right-3 top-3 text-gray-500"
+                            className="absolute right-3 top-4 text-gray-500"
                         >
                             {showConfirm ? <FaEyeSlash /> : <FaEye />}
                         </button>
@@ -147,8 +193,9 @@ const RegisterPage = () => {
                                 <input
                                     type="radio"
                                     name="role"
-                                    value="buyer"
-                                    onChange={handleChange}
+                                    value="user"
+                                    defaultChecked
+
                                 />
                                 User (Buyer)
                             </label>
@@ -158,7 +205,6 @@ const RegisterPage = () => {
                                     type="radio"
                                     name="role"
                                     value="artist"
-                                    onChange={handleChange}
                                 />
                                 Artist (Seller)
                             </label>
@@ -177,7 +223,17 @@ const RegisterPage = () => {
                     >
                         Register
                     </button>
+
+
                 </form>
+
+                <button
+                    onClick={handleGoogleSignIn}
+                    className="mt-6 w-full flex items-center justify-center gap-3 border border-slate-300 rounded-md py-3 hover:bg-slate-50 transition"
+                >
+                    <FcGoogle size={22} />
+                    Continue with Google
+                </button>
 
                 <p className="text-center text-sm text-slate-500 mt-4">
                     Already have an account?{" "}

@@ -4,35 +4,71 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [form, setForm] = useState({
-        email: "",
-        password: "",
-    });
+    const router = useRouter();
 
     const [errors, setErrors] = useState({});
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const handleLogin = async (e) => {
+        e.preventDefault();
 
-    const handleLogin = () => {
+        const formData = new FormData(e.currentTarget);
+        const user = Object.fromEntries(formData.entries());
+
         let newErrors = {};
 
-        if (!form.email) newErrors.email = "Email is required";
-        if (!form.password) newErrors.password = "Password is required";
+        if (!user.email?.trim()) {
+            newErrors.email = "Email is required";
+        }
+
+        if (!user.password) {
+            newErrors.password = "Password is required";
+        }
 
         setErrors(newErrors);
 
-        if (Object.keys(newErrors).length === 0) {
-            console.log("Login success (future backend)");
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+
+        try {
+            const { data, error } = await authClient.signIn.email({
+                email: user.email.trim(),
+                password: user.password,
+            });
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+
+            if (data) {
+                toast.success("Login successful!");
+                e.target.reset();
+                setErrors({});
+                router.push("/");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong");
         }
     };
 
-    const handleGoogleLogin = () => {
-        console.log("Google login will be implemented later");
+    const handleGoogleLogin = async () => {
+        try {
+            await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Google login failed");
+        }
     };
 
     return (
@@ -62,18 +98,17 @@ const LoginPage = () => {
                     <div className="h-px bg-slate-200 flex-1"></div>
                 </div>
 
-                <form className="flex flex-col gap-4">
-
+                <form onSubmit={handleLogin} className="flex flex-col gap-4">
 
                     <div>
                         <input
                             type="email"
                             name="email"
-                            placeholder="Email"
-                            value={form.email}
-                            onChange={handleChange}
+                            placeholder="Enter Email"
+                            autoComplete="email"
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
+
                         {errors.email && (
                             <p className="text-red-500 text-sm mt-1">
                                 {errors.email}
@@ -81,22 +116,20 @@ const LoginPage = () => {
                         )}
                     </div>
 
-
                     <div className="relative">
 
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Password"
-                            value={form.password}
-                            onChange={handleChange}
+                            autoComplete="current-password"
                             className="w-full px-4 py-3 border rounded-md outline-none focus:border-teal-600"
                         />
 
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-500"
+                            className="absolute right-3 top-4 text-gray-500"
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
@@ -109,10 +142,8 @@ const LoginPage = () => {
 
                     </div>
 
-
                     <button
-                        type="button"
-                        onClick={handleLogin}
+                        type="submit"
                         className="bg-teal-600 text-white py-3 rounded-md hover:bg-teal-700 transition"
                     >
                         Login
