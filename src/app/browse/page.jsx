@@ -15,7 +15,7 @@ const BrowseArtworks = () => {
     useEffect(() => {
         const fetchArtworks = async () => {
             try {
-                const res = await fetch("http://localhost:5000/artworks");
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/artworks`);
                 const data = await res.json();
 
                 setArtworks(data);

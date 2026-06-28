@@ -12,7 +12,6 @@ const UserDashboard = () => {
     return (
         <div className="p-6">
 
-            {/* Heading */}
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-slate-800">
                     User Dashboard
@@ -23,7 +22,6 @@ const UserDashboard = () => {
                 </p>
             </div>
 
-            {/* Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
                 <div className="bg-white border rounded-xl p-6 shadow-sm">
@@ -100,7 +98,6 @@ const UserDashboard = () => {
 
             </div>
 
-            {/* Recent Purchases */}
             <div className="mt-10 bg-white border rounded-xl shadow-sm p-6">
 
                 <div className="flex justify-between items-center mb-5">
@@ -158,7 +155,6 @@ const UserDashboard = () => {
 
             </div>
 
-            {/* Subscription & Quick Actions */}
             <div className="grid lg:grid-cols-2 gap-6 mt-10">
 
                 <div className="bg-white border rounded-xl shadow-sm p-6">

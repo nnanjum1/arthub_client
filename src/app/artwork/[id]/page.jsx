@@ -32,7 +32,7 @@ const ArtworkDetails = () => {
 
         try {
             const res = await fetch(
-                "http://localhost:5000/create-checkout-session",
+                `${process.env.NEXT_PUBLIC_API_URL}/create-checkout-session`,
                 {
                     method: "POST",
                     headers: {
@@ -57,7 +57,7 @@ const ArtworkDetails = () => {
         const fetchArtwork = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:5000/artworks/${id}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks/${id}`
                 );
 
                 if (!res.ok) {
@@ -95,7 +95,7 @@ const ArtworkDetails = () => {
     const handleDelete = async () => {
         try {
             const res = await fetch(
-                `http://localhost:5000/artworks/${artwork._id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${artwork._id}`,
                 {
                     method: "DELETE",
                 }

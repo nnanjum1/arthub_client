@@ -24,7 +24,7 @@ const ManageArtWorks = () => {
         const fetchArtworks = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:5000/artworks/artist/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks/artist/${user.email}`
                 );
 
                 const data = await res.json();
@@ -47,9 +47,11 @@ const ManageArtWorks = () => {
     const handleDelete = async () => {
         try {
             const res = await fetch(
-                `http://localhost:5000/artworks/${selectedId}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${selectedId}`,
                 { method: "DELETE" }
             );
+
+
 
             const data = await res.json();
 

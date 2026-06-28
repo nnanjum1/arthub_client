@@ -80,8 +80,8 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             href={item.path}
                             onClick={() => setSidebarOpen(false)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${pathname === item.path
-                                    ? "bg-blue-600 text-white"
-                                    : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                                ? "bg-blue-600 text-white"
+                                : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                                 }`}
                         >
                             {item.icon}
@@ -90,7 +90,6 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     ))}
                 </nav>
 
-                {/* Subscription Overview */}
                 <div className="mx-4 mt-8 p-4 rounded-xl bg-blue-50 border">
                     <h3 className="font-semibold text-blue-700 mb-3">
                         Subscription Plans
