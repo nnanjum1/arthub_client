@@ -2,6 +2,7 @@
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { FaUser } from "react-icons/fa";
 
 const MyProfile = () => {
     const { data: session } = authClient.useSession();
@@ -20,42 +21,57 @@ const MyProfile = () => {
     }
 
     return (
-        <div className="w-[90%] lg:w-2/3 mx-auto py-10">
+        <div className="w-[98%] lg:w-2/3 mx-auto py-10">
 
-            <div className="bg-white shadow-lg rounded-2xl p-8 border">
 
-                <div className="flex items-center gap-5 mb-6">
+            <div className="bg-white shadow-lg rounded-2xl p-8 border max-w-md mx-auto">
 
-                    <div className="w-16 h-16 rounded-full bg-teal-600 flex items-center justify-center text-white text-2xl font-bold">
-                        {user.name?.charAt(0)?.toUpperCase()}
-                    </div>
 
-                    <div>
-                        <h1 className="text-2xl font-bold">
-                            {user.name}
-                        </h1>
+                <div className="flex flex-col items-center">
 
-                        <p className="text-gray-500">
-                            {user.email}
-                        </p>
-                    </div>
+                    {user.image ? (
+                        <img
+                            src={user.image}
+                            alt={user.name}
+                            className="w-28 h-28 rounded-full object-cover border-4 border-teal-500 shadow"
+                        />
+                    ) : (
+                        <div className="w-28 h-28 rounded-full bg-gray-100 border-4 border-teal-500 flex items-center justify-center shadow">
+                            <FaUser className="text-5xl text-gray-400" />
+                        </div>
+                    )}
+
+                    <h1 className="mt-4 text-2xl font-bold text-gray-800">
+                        {user.name}
+                    </h1>
+
+
 
                 </div>
 
-                <div className="space-y-4 text-gray-700">
+                <div className="mt-8 space-y-4">
 
                     <div className="flex justify-between border-b pb-2">
-                        <span className="font-medium">Name</span>
+                        <span className="font-medium text-gray-600">
+                            Name:
+                        </span>
+
                         <span>{user.name}</span>
                     </div>
 
                     <div className="flex justify-between border-b pb-2">
-                        <span className="font-medium">Email</span>
+                        <span className="font-medium text-gray-600">
+                            Email:
+                        </span>
+
                         <span>{user.email}</span>
                     </div>
 
                     <div className="flex justify-between border-b pb-2">
-                        <span className="font-medium">Role</span>
+                        <span className="font-medium text-gray-600">
+                            Role:
+                        </span>
+
                         <span className="capitalize">
                             {user.role || "User"}
                         </span>
@@ -64,20 +80,17 @@ const MyProfile = () => {
                 </div>
 
 
-                <div className="mt-6 flex gap-3">
-
-                    <button
-                        onClick={() => router.push("/dashboard/profile/edit")}
-                        className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg transition"
-                    >
-                        Edit Profile
-                    </button>
-
-                </div>
+                <button
+                    onClick={() => router.push("/dashboard/user/profile/edit")}
+                    className="w-full mt-8 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg transition"
+                >
+                    Edit Profile
+                </button>
 
             </div>
 
         </div>
+
     );
 };
 

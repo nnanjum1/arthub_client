@@ -1,97 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const EditProfile = () => {
     const { data: session } = authClient.useSession();
     const user = session?.user;
+    const router = useRouter();
 
-    const [name, setName] = useState(user?.name || "");
-
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
+    const [name, setName] = useState("");
+    const [image, setImage] = useState("");
+    const [preview, setPreview] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Regex: 6+ chars, 1 uppercase, 1 lowercase, 1 number
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
-
-    // =========================
-    // UPDATE NAME
-    // =========================
-    const handleNameUpdate = async () => {
-        if (!name.trim()) {
-            toast.error("Name cannot be empty");
-            return;
+    useEffect(() => {
+        if (user) {
+            setName(user.name || "");
+            setImage(user.image || "");
+            setPreview(user.image || "");
         }
+    }, [user]);
+
+    const uploadToImgBB = async (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const res = await fetch(
+            `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+            {
+                method: "POST",
+                body: formData,
+            }
+        );
+
+        const data = await res.json();
+
+        if (!data.success) {
+            throw new Error("Image upload failed");
+        }
+
+        return data.data.url;
+    };
+
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        setPreview(URL.createObjectURL(file));
 
         try {
             setLoading(true);
 
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/user/name/${user.email}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ name }),
-                }
-            );
+            const imageUrl = await uploadToImgBB(file);
 
-            const data = await res.json();
+            setImage(imageUrl);
 
-            if (!res.ok) {
-                toast.error(data.message || "Failed to update name");
-                return;
-            }
-
-            toast.success("Name updated successfully");
+            toast.success("Image uploaded successfully");
         } catch (err) {
             console.log(err);
-            toast.error("Something went wrong");
+            toast.error("Image upload failed");
         } finally {
             setLoading(false);
         }
     };
 
-    // =========================
-    // CHANGE PASSWORD
-    // =========================
-    const handlePasswordChange = async () => {
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            toast.error("All fields are required");
-            return;
-        }
-
-        if (!passwordRegex.test(newPassword)) {
-            toast.error(
-                "Password must be 6+ chars, include uppercase, lowercase, and number"
-            );
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            toast.error("Passwords do not match");
-            return;
+    const handleUpdate = async () => {
+        if (!name.trim()) {
+            return toast.error("Name is required");
         }
 
         try {
             setLoading(true);
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/user/change-password/${user.email}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/user/update-profile`,
                 {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        currentPassword,
-                        newPassword,
+                        email: user.email,
+                        name,
+                        image,
                     }),
                 }
             );
@@ -99,15 +93,18 @@ const EditProfile = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                toast.error(data.message || "Password update failed");
-                return;
+                return toast.error(data.message);
             }
 
-            toast.success("Password updated successfully");
+            toast.success("Profile updated successfully");
 
-            setCurrentPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
+
+            router.push("/dashboard/user/profile");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+
+
 
         } catch (err) {
             console.log(err);
@@ -120,93 +117,84 @@ const EditProfile = () => {
     if (!user) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
-                <h2 className="text-lg font-semibold text-gray-600">
-                    Please login to edit profile
+                <h2 className="text-gray-600 font-semibold">
+                    Please login first
                 </h2>
             </div>
         );
     }
 
     return (
-        <div className="w-[90%] lg:w-1/2 mx-auto py-10">
+        <div className="w-[90%] md:w-[70%] lg:w-[35%] mx-auto py-10">
 
-            <h1 className="text-2xl font-bold mb-6">
-                Edit Profile
-            </h1>
+            <div className="bg-white rounded-2xl shadow-lg border p-8">
 
-            {/* ================= NAME CARD ================= */}
-            <div className="bg-white border rounded-xl shadow p-5 mb-6">
+                <h1 className="text-2xl font-bold text-center mb-6">
+                    Edit Profile
+                </h1>
 
-                <h2 className="text-lg font-semibold mb-3">
-                    Update Name
-                </h2>
+                <div className="flex flex-col items-center">
 
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Enter your name"
-                />
+                    <img
+                        src={preview || "/assets/avatar.png"}
+                        alt="Profile"
+                        className="w-28 h-28 rounded-full object-cover border-4 border-teal-500 shadow"
+                    />
 
-                <button
-                    onClick={handleNameUpdate}
-                    disabled={loading}
-                    className="mt-4 bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-lg"
-                >
-                    Save Name
-                </button>
+                    <input
+                        id="profileImage"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                    />
 
-            </div>
+                    <label
+                        htmlFor="profileImage"
+                        className="mt-4 cursor-pointer bg-gray-100 hover:bg-gray-200 border px-5 py-2 rounded-lg text-sm transition"
+                    >
+                        Change Profile Picture
+                    </label>
 
-            {/* ================= PASSWORD CARD ================= */}
-            <div className="bg-white border rounded-xl shadow p-5">
+                </div>
 
-                <h2 className="text-lg font-semibold mb-3">
-                    Change Password
-                </h2>
+                <div className="mt-6">
 
-                <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Current Password"
-                    className="w-full border p-3 rounded-lg mb-3"
-                />
+                    <label className="block mb-2 font-medium">
+                        Name
+                    </label>
 
-                <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New Password"
-                    className="w-full border p-3 rounded-lg mb-3"
-                />
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your name"
+                        className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
 
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm Password"
-                    className="w-full border p-3 rounded-lg mb-3"
-                />
+                </div>
 
-                {/* Rules */}
-                <div className="text-sm text-gray-500 mb-4">
-                    <p className="font-medium">Password rules:</p>
-                    <ul className="list-disc ml-5 mt-1">
-                        <li>At least 6 characters</li>
-                        <li>One uppercase letter</li>
-                        <li>One lowercase letter</li>
-                        <li>One number</li>
-                    </ul>
+                <div className="mt-5">
+
+                    <label className="block mb-2 font-medium">
+                        Email
+                    </label>
+
+                    <input
+                        type="text"
+                        value={user.email}
+                        disabled
+                        className="w-full border rounded-lg px-4 py-3 bg-gray-100 text-gray-500 cursor-not-allowed"
+                    />
+
                 </div>
 
                 <button
-                    onClick={handlePasswordChange}
+                    onClick={handleUpdate}
                     disabled={loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+                    className="w-full mt-8 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white py-3 rounded-lg transition"
                 >
-                    Change Password
+                    {loading ? "Saving..." : "Save Changes"}
                 </button>
 
             </div>
