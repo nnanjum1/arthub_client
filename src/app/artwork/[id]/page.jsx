@@ -12,10 +12,14 @@ const ArtworkDetails = () => {
     const { id } = useParams();
     const router = useRouter();
 
+
+    const [showUpgradeCard, setShowUpgradeCard] = useState(false);
+    const [upgradeMessage, setUpgradeMessage] = useState("");
     const [artwork, setArtwork] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const { data: session } = authClient.useSession();
+
 
     const user = session?.user;
 
@@ -23,6 +27,8 @@ const ArtworkDetails = () => {
     const isOwner =
         user?.email === artwork?.artistEmail;
     const isArtist = user?.role === "artist";
+
+
 
     const handlePurchase = async () => {
         if (!user) {
@@ -46,10 +52,27 @@ const ArtworkDetails = () => {
             );
 
             const data = await res.json();
+            console.log("Artwork API Response:", data);
+            if (res.status === 403) {
+                setUpgradeMessage(data.message);
+                setShowUpgradeCard(true);
+                return;
+            }
 
-            window.location.href = data.checkoutUrl;
+            if (!res.ok) {
+                toast.error(data.message || "Something went wrong");
+                return;
+            }
+
+            if (!data.checkoutUrl) {
+                toast.error("Checkout URL not found.");
+                return;
+            }
+
+            window.location.assign(data.checkoutUrl);
         } catch (error) {
-            toast.error("Failed to start payment");
+            console.error(error);
+            toast.error("Failed to start payment.");
         }
     };
 
@@ -67,8 +90,8 @@ const ArtworkDetails = () => {
                 const data = await res.json();
                 setArtwork(data);
             } catch (error) {
-                toast.error("Failed to load artwork");
                 console.error(error);
+                toast.error("Failed to load artwork");
             } finally {
                 setLoading(false);
             }
@@ -76,6 +99,30 @@ const ArtworkDetails = () => {
 
         fetchArtwork();
     }, [id]);
+
+    const handleDelete = async () => {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${artwork._id}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            const data = await res.json();
+
+            if (data.deletedCount > 0) {
+                toast.success("Artwork deleted successfully");
+                setShowDeleteModal(false);
+                router.push("/browse");
+            } else {
+                toast.error("Failed to delete artwork");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong");
+        }
+    };
 
     if (loading) {
         return <ArtworkSkeleton />;
@@ -91,36 +138,43 @@ const ArtworkDetails = () => {
         );
     }
 
-
-    const handleDelete = async () => {
-        try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${artwork._id}`,
-                {
-                    method: "DELETE",
-                }
-            );
-
-            const data = await res.json();
-
-            if (data.deletedCount > 0) {
-                toast.success("Artwork deleted successfully");
-
-                setShowDeleteModal(false);
-
-                router.push("/browse");
-            } else {
-                toast.error("Failed to delete artwork");
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Something went wrong");
-        }
-    };
+    const isSold = artwork.availability === "Sold";
+    console.log("availability:", artwork.availability);
+    console.log("isSold:", isSold);
 
     return (
         <div className="w-[90%] mx-auto py-10">
 
+
+            {
+                showUpgradeCard && (
+                    <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-50 p-5">
+                        <h3 className="text-lg font-semibold text-yellow-700">
+                            Purchase Limit Reached
+                        </h3>
+
+                        <p className="mt-2 text-slate-700">
+                            You have reached the maximum number of purchases allowed by your current subscription.
+                        </p>
+
+                        <div className="mt-4 flex gap-3">
+                            <Link
+                                href="/dashboard/user/subscription"
+                                className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
+                            >
+                                Upgrade Plan
+                            </Link>
+
+                            <button
+                                onClick={() => setShowUpgradeCard(false)}
+                                className="border px-5 py-2 rounded-lg"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
             <div className="grid md:grid-cols-2 gap-10">
 
                 <div>
@@ -131,7 +185,7 @@ const ArtworkDetails = () => {
                     />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-4 w-[80%]">
 
                     <h1 className="text-4xl font-bold">
                         {artwork.title}
@@ -166,27 +220,34 @@ const ArtworkDetails = () => {
                     <h2 className="text-3xl font-bold text-teal-600">
                         ${artwork.price}
                     </h2>
-                    <p>{artwork.availability}</p>
 
-                    <div className="mt-8">
+                    <p
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+        ${artwork.availability === "Sold"
+                                ? "bg-red-100 text-red-700 border border-red-200"
+                                : "bg-green-100 text-green-700 border border-green-200"
+                            }`}
+                    >
+                        {artwork.availability === "Sold" ? "Sold" : "● Available"}
+                    </p>
 
-                        <h3 className="text-xl font-semibold mb-3">
-                            Description
-                        </h3>
+                    <h3 className="text-xl font-semibold mb-3 mt-8">
+                        Description
+                    </h3>
 
-                        <p className="text-slate-600 leading-7">
-                            {artwork.description}
-                        </p>
+                    <p className="text-slate-600 leading-7">
+                        {artwork.description}
+                    </p>
 
-                    </div>
+
 
                     <div className="flex flex-wrap gap-3 mt-6">
 
                         <button
                             onClick={handlePurchase}
-                            disabled={isArtist}
+                            disabled={isArtist || isSold}
                             className={`px-6 py-3 rounded-lg text-white transition
-        ${isArtist
+                            ${isArtist || isSold
                                     ? "bg-slate-400 cursor-not-allowed"
                                     : "bg-teal-600 hover:bg-teal-700"
                                 }`}
