@@ -24,7 +24,6 @@ const MyProfile = () => {
 
             <div className="bg-white shadow-lg rounded-2xl p-8 border">
 
-                {/* Header */}
                 <div className="flex items-center gap-5 mb-6">
 
                     <div className="w-16 h-16 rounded-full bg-teal-600 flex items-center justify-center text-white text-2xl font-bold">
@@ -43,7 +42,6 @@ const MyProfile = () => {
 
                 </div>
 
-                {/* Profile Info */}
                 <div className="space-y-4 text-gray-700">
 
                     <div className="flex justify-between border-b pb-2">
@@ -65,7 +63,7 @@ const MyProfile = () => {
 
                 </div>
 
-                {/* Actions */}
+
                 <div className="mt-6 flex gap-3">
 
                     <button
