@@ -11,25 +11,30 @@ import {
 
 const Subscription = () => {
     const { data: session } = authClient.useSession();
-
     const user = session?.user;
 
-    const [currentPlan, setCurrentPlan] = useState("");
+    const [currentPlan, setCurrentPlan] = useState("free");
     const [loading, setLoading] = useState(true);
-    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
-        if (!user?.email) return;
+        if (!user?.email) {
+            setLoading(false);
+            return;
+        }
 
         const fetchUser = async () => {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/users/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/user/${user.email}`
                 );
 
-                const data = await res.json();
+                if (res.ok) {
+                    const data = await res.json();
 
-                setCurrentPlan(data.subscriptionTier || "Free");
+                    setCurrentPlan(
+                        (data.subscriptionTier || "free").toLowerCase()
+                    );
+                }
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to load subscription.");
@@ -41,49 +46,14 @@ const Subscription = () => {
         fetchUser();
     }, [user]);
 
-    const handleUpgrade = async (plan) => {
-        try {
-            setUpdating(true);
-
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/subscription/${user.email}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        subscriptionTier: plan,
-                    }),
-                }
-            );
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message);
-            }
-
-            setCurrentPlan(plan);
-
-            toast.success(`Subscription upgraded to ${plan}`);
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to update subscription");
-        } finally {
-            setUpdating(false);
-        }
-    };
-
     const plans = [
         {
             name: "Free",
+            planId: "user_free",
             price: "$0",
             purchases: "3 Paintings",
             color: "border-slate-300",
-            icon: (
-                <FaCheckCircle className="text-3xl text-slate-500" />
-            ),
+            icon: <FaCheckCircle className="text-3xl text-slate-500" />,
             features: [
                 "Browse all artworks",
                 "Purchase up to 3 artworks",
@@ -93,12 +63,11 @@ const Subscription = () => {
         },
         {
             name: "Pro",
+            planId: "user_pro",
             price: "$9.99",
             purchases: "9 Paintings",
             color: "border-blue-500",
-            icon: (
-                <FaCrown className="text-3xl text-blue-600" />
-            ),
+            icon: <FaCrown className="text-3xl text-blue-600" />,
             features: [
                 "Purchase up to 9 artworks",
                 "Priority support",
@@ -108,12 +77,11 @@ const Subscription = () => {
         },
         {
             name: "Premium",
+            planId: "user_premium",
             price: "$19.99",
             purchases: "Unlimited",
             color: "border-yellow-500",
-            icon: (
-                <FaGem className="text-3xl text-yellow-500" />
-            ),
+            icon: <FaGem className="text-3xl text-yellow-500" />,
             features: [
                 "Unlimited purchases",
                 "Premium support",
@@ -126,22 +94,24 @@ const Subscription = () => {
 
     if (loading) {
         return (
-            <div className="text-center py-20">
-                Loading subscription...
+            <div className="flex justify-center items-center h-[70vh]">
+                <h2 className="text-lg font-semibold">
+                    Loading Subscription...
+                </h2>
             </div>
         );
     }
 
     return (
         <div className="max-w-7xl mx-auto">
-
             <div className="mb-10">
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-3xl font-bold text-slate-800">
                     Subscription Plans
                 </h1>
 
                 <p className="text-slate-500 mt-2">
-                    Choose a plan that fits your artwork collection needs.
+                    Upgrade your membership to unlock more purchases and exclusive
+                    benefits.
                 </p>
             </div>
 
@@ -150,20 +120,18 @@ const Subscription = () => {
                     Current Plan
                 </h2>
 
-                <p className="mt-2">
-                    You are currently using the{" "}
-                    <span className="font-bold text-blue-700">
+                <p className="mt-2 text-slate-700">
+                    You are currently subscribed to{" "}
+                    <span className="font-bold text-blue-700 capitalize">
                         {currentPlan}
-                    </span>{" "}
-                    plan.
+                    </span>
                 </p>
             </div>
 
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-
                 {plans.map((plan) => (
                     <div
-                        key={plan.name}
+                        key={plan.planId}
                         className={`bg-white border-2 ${plan.color} rounded-2xl shadow-sm p-8 flex flex-col`}
                     >
                         <div className="flex justify-center mb-5">
@@ -194,25 +162,48 @@ const Subscription = () => {
                             ))}
                         </div>
 
-                        <button
-                            disabled={
-                                currentPlan === plan.name ||
-                                updating
-                            }
-                            onClick={() =>
-                                handleUpgrade(plan.name)
-                            }
-                            className={`mt-8 w-full py-3 rounded-lg font-semibold transition ${currentPlan === plan.name
-                                ? "bg-slate-300 text-slate-600 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700 text-white"
-                                }`}
-                        >
-                            {currentPlan === plan.name
-                                ? "Current Plan"
-                                : updating
-                                    ? "Updating..."
-                                    : `Upgrade to ${plan.name}`}
-                        </button>
+                        {plan.name.toLowerCase() === "free" ? (
+                            <button
+                                disabled
+                                className="mt-8 w-full py-3 rounded-lg bg-slate-300 text-slate-600 cursor-not-allowed"
+                            >
+                                {currentPlan === "free"
+                                    ? "Current Plan"
+                                    : "Free Plan"}
+                            </button>
+                        ) : currentPlan === plan.name.toLowerCase() ? (
+                            <button
+                                disabled
+                                className="mt-8 w-full py-3 rounded-lg bg-slate-300 text-slate-600 cursor-not-allowed"
+                            >
+                                Current Plan
+                            </button>
+                        ) : (
+                            <form
+                                action="/api/checkout_sessions"
+                                method="POST"
+                                className="mt-8"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="plan"
+                                    value={plan.planId}
+                                />
+
+                                <input
+                                    type="hidden"
+                                    name="email"
+                                    value={user?.email || ""}
+                                />
+
+                                <button
+                                    type="submit"
+                                    className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+                                >
+                                    Upgrade to {plan.name}
+                                </button>
+                            </form>
+                        )}
                     </div>
                 ))}
             </div>
@@ -223,13 +214,12 @@ const Subscription = () => {
                 </h2>
 
                 <ul className="list-disc list-inside space-y-2 text-slate-600">
-                    <li>Upgrade or downgrade your subscription anytime.</li>
-                    <li>Your purchased artworks remain accessible even if your plan changes.</li>
-                    <li>Payments are billed securely.</li>
+                    <li>Secure payments powered by Stripe.</li>
+                    <li>Upgrade or downgrade anytime.</li>
+                    <li>Your purchased artworks remain accessible.</li>
                     <li>Premium members receive exclusive artwork access.</li>
                 </ul>
             </div>
-
         </div>
     );
 };
