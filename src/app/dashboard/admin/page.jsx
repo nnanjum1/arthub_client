@@ -22,6 +22,7 @@ const AdminDashboard = () => {
     const [salesData, setSalesData] = useState([]);
     const [categoryData, setCategoryData] = useState([]);
 
+
     const [recentArtworks, setRecentArtworks] = useState([]);
     const [recentTransactions, setRecentTransactions] = useState([]);
 
@@ -47,6 +48,25 @@ const AdminDashboard = () => {
         };
 
         fetchDashboard();
+    }, []);
+
+    useEffect(() => {
+        const fetchArtworks = async () => {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks`
+                );
+
+                const data = await res.json();
+                setRecentArtworks(data);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchArtworks();
     }, []);
 
     if (loading) {
@@ -77,7 +97,6 @@ const AdminDashboard = () => {
                 </p>
             </div>
 
-            {/* Analytics Cards */}
 
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
 
@@ -195,7 +214,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            {/* Charts */}
+
 
             <div className="grid lg:grid-cols-2 gap-6 mt-10">
 
@@ -205,7 +224,7 @@ const AdminDashboard = () => {
                         Sales Overview
                     </h2>
 
-                    {/* Chart goes here */}
+
 
                 </div>
 
@@ -215,36 +234,219 @@ const AdminDashboard = () => {
                         Artworks by Category
                     </h2>
 
-                    {/* Pie chart goes here */}
 
                 </div>
 
             </div>
 
-            {/* Recent Artworks */}
 
-            <div className="bg-white rounded-xl border shadow mt-10 p-6">
 
-                <div className="flex justify-between items-center mb-5">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mt-10 p-6">
 
-                    <h2 className="text-xl font-semibold">
-                        Recent Artworks
-                    </h2>
+                <div className="flex items-center justify-between mb-6">
+
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-800">
+                            Recent Artworks
+                        </h2>
+
+                        <p className="text-sm text-slate-500">
+                            Latest artworks submitted by artists
+                        </p>
+                    </div>
 
                     <Link
                         href="/dashboard/admin/manage-artworks"
-                        className="text-teal-600 font-medium hover:underline"
+                        className="text-teal-600 font-semibold hover:text-teal-700 transition"
                     >
                         View All →
                     </Link>
 
                 </div>
 
-                {/* Table Part 2 */}
+                <div className="lg:hidden space-y-4">
+
+                    {recentArtworks.length === 0 ? (
+
+                        <div className="text-center py-10 text-slate-500">
+                            No artworks found.
+                        </div>
+
+                    ) : (
+
+                        recentArtworks.slice(0, 5).map((item) => (
+
+                            <div
+                                key={item._id}
+                                className="border rounded-xl p-4 shadow-sm"
+                            >
+
+                                <div className="flex gap-3">
+
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-20 h-20 rounded-lg object-cover"
+                                    />
+
+                                    <div className="flex-1">
+
+                                        <h3 className="font-semibold text-slate-800">
+                                            {item.title}
+                                        </h3>
+
+                                        <p className="text-sm text-slate-500 mt-1">
+                                            {item.artistName}
+                                        </p>
+
+                                        <div className="flex flex-wrap gap-2 mt-3">
+
+                                            <span className="bg-slate-100 px-2 py-1 rounded text-xs">
+                                                {item.category}
+                                            </span>
+
+                                            <span className="text-teal-600 font-semibold">
+                                                ${item.price}
+                                            </span>
+
+                                        </div>
+
+                                        <div className="mt-3">
+
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-xs font-semibold
+                                ${item.status === "Approved"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : item.status === "Pending"
+                                                            ? "bg-yellow-100 text-yellow-700"
+                                                            : "bg-red-100 text-red-700"
+                                                    }`}
+                                            >
+                                                {item.status}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        ))
+
+                    )}
+
+                </div>
+
+
+                <div className="hidden lg:block overflow-x-auto">
+
+                    <table className="w-full">
+
+                        <thead>
+
+                            <tr className="border-b text-left text-sm text-slate-500">
+
+                                <th className="pb-4">Artwork</th>
+                                <th className="pb-4">Artist</th>
+                                <th className="pb-4">Category</th>
+                                <th className="pb-4">Price</th>
+                                <th className="pb-4 text-center">Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {recentArtworks.length === 0 ? (
+
+                                <tr>
+                                    <td
+                                        colSpan={5}
+                                        className="text-center py-10 text-slate-500"
+                                    >
+                                        No artworks found.
+                                    </td>
+                                </tr>
+
+                            ) : (
+
+                                recentArtworks.slice(0, 5).map((item) => (
+
+                                    <tr
+                                        key={item._id}
+                                        className="border-b last:border-none hover:bg-slate-50 transition"
+                                    >
+
+                                        <td className="py-4">
+
+                                            <div className="flex items-center gap-4">
+
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-14 h-14 rounded-xl object-cover border"
+                                                />
+
+                                                <div>
+                                                    <h3 className="font-semibold text-slate-800">
+                                                        {item.title}
+                                                    </h3>
+
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td className="text-slate-700">
+                                            {item.artistName}
+                                        </td>
+
+                                        <td>
+                                            <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm">
+                                                {item.category}
+                                            </span>
+                                        </td>
+
+                                        <td className="font-semibold text-teal-600">
+                                            ${item.price}
+                                        </td>
+
+                                        <td className="text-center">
+
+                                            <span
+                                                className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold
+                                    ${item.status === "Approved"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : item.status === "Pending"
+                                                            ? "bg-yellow-100 text-yellow-700"
+                                                            : "bg-red-100 text-red-700"
+                                                    }`}
+                                            >
+                                                {item.status}
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                ))
+
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
-            {/* Transactions */}
+
 
             <div className="bg-white rounded-xl border shadow mt-10 p-6">
 
@@ -263,7 +465,7 @@ const AdminDashboard = () => {
 
                 </div>
 
-                {/* Table Part 3 */}
+
 
             </div>
 

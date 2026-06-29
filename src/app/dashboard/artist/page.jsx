@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import {
     FaPalette,
@@ -125,45 +126,182 @@ const ArtistDashboard = () => {
             </div>
 
 
-            <div className="mt-10 bg-white rounded-xl shadow-sm border p-6">
 
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">
-                    Recent Artworks
-                </h2>
+            <div className="mt-10 bg-white rounded-2xl shadow-sm border p-6">
 
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
+                <div className="flex items-center justify-between mb-6">
+
+                    <div>
+                        <h2 className="text-xl font-bold text-slate-800">
+                            Recent Artworks
+                        </h2>
+
+                        <p className="text-sm text-slate-500">
+                            Your latest uploaded artworks
+                        </p>
+                    </div>
+
+                    <Link
+                        href="/dashboard/artist/artworks"
+                        className="text-teal-600 font-semibold hover:text-teal-700"
+                    >
+                        View All →
+                    </Link>
+
+                </div>
+
+                <div className="lg:hidden space-y-4">
+
+                    {dashboard?.recentArtworks?.length === 0 ? (
+
+                        <div className="text-center py-8 text-slate-500">
+                            No artworks found.
+                        </div>
+
+                    ) : (
+
+                        dashboard?.recentArtworks?.map((art) => (
+
+                            <div
+                                key={art._id}
+                                className="border rounded-xl p-4"
+                            >
+
+                                <h3 className="font-semibold text-lg">
+                                    {art.title}
+                                </h3>
+
+                                <div className="grid grid-cols-2 gap-y-3 mt-4 text-sm">
+
+                                    <span className="text-slate-500">
+                                        Category
+                                    </span>
+
+                                    <span>{art.category}</span>
+
+                                    <span className="text-slate-500">
+                                        Price
+                                    </span>
+
+                                    <span className="font-semibold text-teal-600">
+                                        ${art.price}
+                                    </span>
+
+                                    <span className="text-slate-500">
+                                        Availability
+                                    </span>
+
+                                    <span
+                                        className={`inline-flex w-fit px-3 py-1 rounded-full text-xs font-semibold
+                            ${art.availability === "Sold"
+                                                ? "bg-red-100 text-red-600"
+                                                : "bg-green-100 text-green-600"
+                                            }`}
+                                    >
+                                        {art.availability}
+                                    </span>
+
+                                    <span className="text-slate-500">
+                                        Status
+                                    </span>
+
+                                    <span
+                                        className={`inline-flex w-fit px-3 py-1 rounded-full text-xs font-semibold
+                            ${art.status === "Approved"
+                                                ? "bg-green-100 text-green-700"
+                                                : art.status === "Pending"
+                                                    ? "bg-yellow-100 text-yellow-700"
+                                                    : "bg-red-100 text-red-700"
+                                            }`}
+                                    >
+                                        {art.status}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        ))
+
+                    )}
+
+                </div>
+
+                <div className="hidden lg:block overflow-x-auto">
+
+                    <table className="w-full">
 
                         <thead>
-                            <tr className="border-b">
-                                <th className="text-left py-3">Title</th>
-                                <th className="text-left py-3 pl-2">Category</th>
-                                <th className="text-left py-3 pl-2">Price</th>
-                                <th className="text-left py-3 pl-2">Status</th>
+
+                            <tr className="border-b text-slate-600">
+
+                                <th className="text-left py-4">Title</th>
+                                <th className="text-left py-4">Category</th>
+                                <th className="text-left py-4">Price</th>
+                                <th className="text-left py-4">Availability</th>
+                                <th className="text-left py-4">Status</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody>
+
                             {dashboard?.recentArtworks?.map((art) => (
-                                <tr key={art._id} className="border-b">
-                                    <td className="py-3">{art.title}</td>
-                                    <td className="pl-2">{art.category}</td>
-                                    <td className="pl-2">${art.price}</td>
+
+                                <tr
+                                    key={art._id}
+                                    className="border-b hover:bg-slate-50"
+                                >
+
+                                    <td className="py-4 font-medium">
+                                        {art.title}
+                                    </td>
+
+                                    <td>{art.category}</td>
+
+                                    <td className="font-semibold text-teal-600">
+                                        ${art.price}
+                                    </td>
+
                                     <td>
+
                                         <span
-                                            className={`px-3 pl-2 py-1 rounded-full text-sm ${art.availability === "Sold"
-                                                ? "bg-red-100 text-red-600"
-                                                : "bg-green-100 text-green-600"
+                                            className={`px-3 py-1 rounded-full text-xs font-semibold
+                                ${art.availability === "Sold"
+                                                    ? "bg-red-100 text-red-600"
+                                                    : "bg-green-100 text-green-600"
                                                 }`}
                                         >
                                             {art.availability}
                                         </span>
+
                                     </td>
+
+                                    <td>
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-semibold
+                                ${art.status === "Approved"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : art.status === "Pending"
+                                                        ? "bg-yellow-100 text-yellow-700"
+                                                        : "bg-red-100 text-red-700"
+                                                }`}
+                                        >
+                                            {art.status}
+                                        </span>
+
+                                    </td>
+
                                 </tr>
+
                             ))}
+
                         </tbody>
 
                     </table>
+
                 </div>
 
             </div>

@@ -104,46 +104,77 @@ const ManageArtWorks = () => {
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
 
-                    {artworks.map((art) => (
+                    {artworks.map((artwork) => (
                         <div
-                            key={art._id}
-                            className="bg-white rounded-xl shadow overflow-hidden"
+                            key={artwork._id}
+                            className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                         >
+                            <Link href={`/artwork/${artwork._id}`}>
 
-                            <img
-                                src={art.image}
-                                alt={art.title}
-                                className="w-full h-52 object-cover"
-                            />
+                                <img
+                                    src={artwork.image}
+                                    alt={artwork.title}
+                                    className="w-full h-52 object-cover"
+                                />
 
-                            <div className="p-4 space-y-2">
+                                <div className="p-4">
 
-                                <h2 className="text-lg font-semibold">
-                                    {art.title}
-                                </h2>
+                                    <h2 className="text-lg font-semibold line-clamp-1">
+                                        {artwork.title}
+                                    </h2>
 
-                                <p className="text-slate-500 text-sm">
-                                    {art.category}
-                                </p>
+                                    <p className="text-slate-500 text-sm mt-1">
+                                        {artwork.category}
+                                    </p>
 
-                                <p className="text-teal-600 font-bold">
-                                    ${art.price}
-                                </p>
+                                    <p className="text-teal-600 font-bold text-lg mt-2">
+                                        ${artwork.price}
+                                    </p>
 
-                                <div className="flex gap-3 mt-4">
+                                    <div className="flex flex-wrap gap-2 mt-3">
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-medium
+                        ${artwork.status === "Approved"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : artwork.status === "Pending"
+                                                        ? "bg-yellow-100 text-yellow-700"
+                                                        : "bg-red-100 text-red-700"
+                                                }`}
+                                        >
+                                            {artwork.status}
+                                        </span>
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-medium
+                        ${artwork.availability === "Sold"
+                                                    ? "bg-red-100 text-red-700"
+                                                    : "bg-blue-100 text-blue-700"
+                                                }`}
+                                        >
+                                            {artwork.availability}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </Link>
+
+                            <div className="px-4 pb-4 mt-auto">
+
+                                <div className="grid grid-cols-2 gap-3">
 
                                     <Link
-                                        href={`/dashboard/artist/edit-artwork/${art._id}`}
-                                        className="flex-1 text-center bg-blue-600 text-white py-2 rounded-lg"
+                                        href={`/dashboard/artist/edit-artwork/${artwork._id}`}
+                                        className="text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
                                     >
                                         Edit
                                     </Link>
 
                                     <button
-                                        onClick={() =>
-                                            openDeleteModal(art._id)
-                                        }
-                                        className="flex-1 bg-red-600 text-white py-2 rounded-lg"
+                                        onClick={() => openDeleteModal(artwork._id)}
+                                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
                                     >
                                         Delete
                                     </button>
@@ -151,6 +182,7 @@ const ManageArtWorks = () => {
                                 </div>
 
                             </div>
+
                         </div>
                     ))}
 

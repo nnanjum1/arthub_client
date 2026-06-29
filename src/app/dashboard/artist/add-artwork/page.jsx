@@ -57,7 +57,7 @@ const AddArtwork = () => {
                 price: Number(price),
                 category,
                 image: imageUrl,
-
+                status: "Pending",
                 availability: "available",
             };
 
