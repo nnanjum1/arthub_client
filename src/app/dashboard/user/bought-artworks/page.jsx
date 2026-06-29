@@ -23,7 +23,7 @@ const BoughtArtWorks = () => {
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`,
                     {
-                        method: "GET",
+
                         headers: {
                             "Content-Type": "application/json",
                             'authorization': `Bearer ${tokenData?.token}`

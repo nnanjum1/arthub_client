@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import LoginCard from "@/app/components/Logincard";
 
 const EditProfile = () => {
     const { data: session } = authClient.useSession();
@@ -46,8 +45,7 @@ const EditProfile = () => {
     };
 
     const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-
+        const file = e.target.files?.[0];
         if (!file) return;
 
         setPreview(URL.createObjectURL(file));
@@ -56,7 +54,6 @@ const EditProfile = () => {
             setLoading(true);
 
             const imageUrl = await uploadToImgBB(file);
-
             setImage(imageUrl);
 
             toast.success("Image uploaded successfully");
@@ -69,13 +66,19 @@ const EditProfile = () => {
     };
 
     const handleUpdate = async () => {
-        if (!name.trim()) {
-            return toast.error("Name is required");
-        }
-
         try {
             setLoading(true);
-            const { data: tokenData } = await authClient.token()
+
+            const { data: tokenData } = await authClient.token();
+
+            const token = tokenData?.token;
+
+            console.log("TOKEN:", token);
+
+            if (!token) {
+                toast.error("No auth token found. Please login again.");
+                return;
+            }
 
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/user/update-profile`,
@@ -83,10 +86,9 @@ const EditProfile = () => {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        'authorization': `Bearer ${tokenData?.token}`
+                        Authorization: `Bearer ${token}`, // ✅ standard format
                     },
                     body: JSON.stringify({
-                        email: user.email,
                         name,
                         image,
                     }),
@@ -96,19 +98,17 @@ const EditProfile = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                return toast.error(data.message);
+                toast.error(data.message || "Update failed");
+                return;
             }
 
             toast.success("Profile updated successfully");
+            toast.success("Re login to see your updated profil data");
 
 
-            router.push("/dashboard/artist/profile");
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            await authClient.signOut();
 
-
-
+            router.push("/login");
         } catch (err) {
             console.log(err);
             toast.error("Something went wrong");
@@ -117,9 +117,9 @@ const EditProfile = () => {
         }
     };
 
-    if (!session || session?.user?.role !== 'artist') {
+    if (!session || session?.user?.role !== "artist") {
         return (
-            <div >
+            <div>
                 <LoginCard />
             </div>
         );
@@ -127,15 +127,12 @@ const EditProfile = () => {
 
     return (
         <div className="w-[90%] md:w-[70%] lg:w-[35%] mx-auto py-10">
-
             <div className="bg-white rounded-2xl shadow-lg border p-8">
-
                 <h1 className="text-2xl font-bold text-center mb-6">
                     Edit Profile
                 </h1>
 
                 <div className="flex flex-col items-center">
-
                     <img
                         src={preview || "/assets/avatar.png"}
                         alt="Profile"
@@ -156,15 +153,10 @@ const EditProfile = () => {
                     >
                         Change Profile Picture
                     </label>
-
                 </div>
 
                 <div className="mt-6">
-
-                    <label className="block mb-2 font-medium">
-                        Name
-                    </label>
-
+                    <label className="block mb-2 font-medium">Name</label>
                     <input
                         type="text"
                         value={name}
@@ -172,22 +164,16 @@ const EditProfile = () => {
                         placeholder="Enter your name"
                         className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
-
                 </div>
 
                 <div className="mt-5">
-
-                    <label className="block mb-2 font-medium">
-                        Email
-                    </label>
-
+                    <label className="block mb-2 font-medium">Email</label>
                     <input
                         type="text"
-                        value={user.email}
+                        value={user?.email || ""}
                         disabled
                         className="w-full border rounded-lg px-4 py-3 bg-gray-100 text-gray-500 cursor-not-allowed"
                     />
-
                 </div>
 
                 <button
@@ -197,9 +183,7 @@ const EditProfile = () => {
                 >
                     {loading ? "Saving..." : "Save Changes"}
                 </button>
-
             </div>
-
         </div>
     );
 };
