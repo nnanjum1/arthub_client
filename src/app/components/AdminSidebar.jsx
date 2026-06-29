@@ -1,5 +1,11 @@
 "use client";
 
+
+
+
+
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,37 +15,37 @@ import {
     FaUserEdit,
     FaCrown,
     FaTimes,
+    FaMoneyCheckAlt,
+    FaPalette,
+    FaUsers,
+    FaTachometerAlt,
 } from "react-icons/fa";
 
-const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
+const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const pathname = usePathname();
 
     const menuItems = [
         {
             name: "Dashboard",
-            path: "/dashboard/user",
-            icon: <FaHome />,
+            icon: <FaTachometerAlt />,
+            path: "/dashboard/admin",
         },
         {
-            name: "Purchase History",
-            path: "/dashboard/user/purchase-history",
-            icon: <FaShoppingBag />,
+            name: "Manage Users",
+            icon: <FaUsers />,
+            path: "/dashboard/admin/manage-users",
         },
         {
-            name: "Bought Artworks",
-            path: "/dashboard/user/bought-artworks",
-            icon: <FaImages />,
+            name: "Manage Artworks",
+            icon: <FaPalette />,
+            path: "/dashboard/admin/manage-artworks",
         },
         {
-            name: "Subscription",
-            path: "/dashboard/user/subscription",
-            icon: <FaCrown />,
+            name: "Transactions",
+            icon: <FaMoneyCheckAlt />,
+            path: "/dashboard/admin/transactions",
         },
-        {
-            name: "Profile",
-            path: "/dashboard/user/profile",
-            icon: <FaUserEdit />,
-        },
+
     ];
 
     return (
@@ -53,12 +59,12 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
             <aside
                 className={`
-                    fixed md:static top-0 left-0 min-h-screen
-                    w-72 bg-white border-r shadow-sm z-50
-                    transform transition-transform duration-300
-                    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                    md:translate-x-0
-                `}
+                        fixed md:static top-0 left-0 min-h-screen
+                        w-72 bg-white border-r shadow-sm z-50
+                        transform transition-transform duration-300
+                        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                        md:translate-x-0
+                    `}
             >
                 <div className="p-6 border-b flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-blue-700">
@@ -96,4 +102,5 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     );
 };
 
-export default UserSidebar;
+
+export default AdminSidebar;

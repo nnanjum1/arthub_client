@@ -21,6 +21,12 @@ export default function Navbar() {
         toast.success("Logged out successfully");
     };
 
+    const getDashboardRoute = () => {
+        if (user?.role === "admin") return "/dashboard/admin";
+        if (user?.role === "artist") return "/dashboard/artist";
+        return "/dashboard/user";
+    };
+
     const isActive = (path) =>
         pathname === path
             ? "text-teal-600 font-semibold"
@@ -54,20 +60,14 @@ export default function Navbar() {
                     {user ? (
                         <div className="relative flex items-center gap-3">
 
+
                             <Link
-                                href={
-                                    user?.role === "artist"
-                                        ? "/dashboard/artist"
-                                        : "/dashboard/user"
-                                }
-                                className={isActive(
-                                    user?.role === "artist"
-                                        ? "/dashboard/artist"
-                                        : "/dashboard/user"
-                                )}
+                                href={getDashboardRoute()}
+                                className={isActive(getDashboardRoute())}
                             >
                                 Dashboard
                             </Link>
+
 
 
 
