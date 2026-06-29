@@ -28,6 +28,7 @@ const ArtworkDetails = () => {
         user?.email === artwork?.artistEmail;
     const isArtist = user?.role === "artist";
 
+    const isAdmin = user?.role === "admin";
 
 
     const handlePurchase = async () => {
@@ -37,12 +38,15 @@ const ArtworkDetails = () => {
         }
 
         try {
+            const { data: tokenData } = await authClient.token();
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/create-checkout-session`,
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${tokenData?.token}`,
                     },
                     body: JSON.stringify({
                         artworkId: artwork._id,
@@ -102,10 +106,15 @@ const ArtworkDetails = () => {
 
     const handleDelete = async () => {
         try {
+            const { data: tokenData } = await authClient.token();
+
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${artwork._id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${id}`,
                 {
                     method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${tokenData?.token}`,
+                    },
                 }
             );
 
@@ -245,7 +254,7 @@ const ArtworkDetails = () => {
 
                         <button
                             onClick={handlePurchase}
-                            disabled={isArtist || isSold}
+                            disabled={isArtist || isSold || isAdmin}
                             className={`px-6 py-3 rounded-lg text-white transition
                             ${isArtist || isSold
                                     ? "bg-slate-400 cursor-not-allowed"

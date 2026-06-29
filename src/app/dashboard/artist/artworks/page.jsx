@@ -46,14 +46,23 @@ const ManageArtWorks = () => {
 
     const handleDelete = async () => {
         try {
+            const { data: tokenData } = await authClient.token();
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/artworks/${selectedId}`,
-                { method: "DELETE" }
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${tokenData?.token}`,
+                    },
+                }
             );
 
-
-
             const data = await res.json();
+
+            if (!res.ok) {
+                return toast.error(data.message || "Delete failed");
+            }
 
             if (data.deletedCount > 0) {
                 setArtworks((prev) =>
@@ -63,6 +72,7 @@ const ManageArtWorks = () => {
                 toast.success("Artwork deleted");
             }
         } catch (error) {
+            console.error(error);
             toast.error("Delete failed");
         } finally {
             setShowDeleteModal(false);

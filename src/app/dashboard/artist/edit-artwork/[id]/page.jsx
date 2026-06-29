@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import { authClient } from "@/lib/auth-client";
 
 const EditArtwork = () => {
     const { id } = useParams();
