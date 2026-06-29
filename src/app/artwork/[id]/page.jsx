@@ -194,8 +194,8 @@ const ArtworkDetails = () => {
                     <p>
                         Artist:
                         <Link
-                            href={`/artist/${artwork.artistEmail}`}
-                            className="ml-2 text-teal-600 hover:underline"
+                            href={`/artist/${encodeURIComponent(artwork.artistEmail)}`}
+                            className="text-teal-600 font-semibold hover:text-teal-700 hover:underline"
                         >
                             {artwork.artistName}
                         </Link>

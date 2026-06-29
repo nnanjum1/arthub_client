@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
 
 const BoughtArtWorks = () => {
     const { data: session } = authClient.useSession();
@@ -35,93 +36,57 @@ const BoughtArtWorks = () => {
     if (loading) {
         return (
             <div className="flex justify-center py-20">
-                <span className="loading loading-spinner loading-lg text-teal-600"></span>
-            </div>
+                <ArtworkSkeleton />            </div>
         );
     }
 
     return (
-        <div className="w-[95%] lg:w-11/12 mx-auto py-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
 
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-800">
-                    Bought Artworks
-                </h2>
 
-                <p className="text-gray-500 mt-2">
-                    Explore all artworks you've purchased.
-                </p>
-            </div>
+            {artworks.map((art) => (
 
-            {artworks.length === 0 ? (
+                <Link
+                    key={art._id}
+                    href={`/artwork/${art.artworkId}`}
+                    className="group relative overflow-hidden rounded-2xl shadow-lg"
+                >
 
-                <div className="bg-white rounded-xl shadow border p-16 text-center">
+                    <img
+                        src={art.image}
+                        alt={art.artworkName}
+                        className="w-full aspect-square object-cover transition duration-500 group-hover:scale-110"
+                    />
 
-                    <h3 className="text-2xl font-semibold text-gray-700">
-                        No Purchased Artworks
-                    </h3>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition duration-300"></div>
 
-                    <p className="text-gray-500 mt-3">
-                        Purchased artworks will appear here.
-                    </p>
+                    <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition duration-300">
 
-                </div>
+                        <h3 className="text-white font-semibold text-lg truncate">
+                            {art.artworkName}
+                        </h3>
 
-            ) : (
+                        <p className="text-gray-200 text-sm">
+                            {art.artist}
+                        </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="flex justify-between items-center mt-2">
 
-                    {artworks.map((art) => (
+                            <span className="text-teal-300 font-bold">
+                                ${art.price}
+                            </span>
 
-                        <div
-                            key={art._id}
-                            className="bg-white rounded-2xl shadow hover:shadow-xl transition duration-300 overflow-hidden group"
-                        >
-
-                            <div className="overflow-hidden">
-
-                                <img
-                                    src={art.image}
-                                    alt={art.artworkName}
-                                    className="w-full h-64 object-cover group-hover:scale-105 transition duration-500"
-                                />
-
-                            </div>
-
-                            <div className="p-5">
-
-                                <h3 className="text-xl font-semibold line-clamp-1">
-                                    {art.artworkName}
-                                </h3>
-
-                                <p className="text-gray-500 mt-1">
-                                    by {art.artist}
-                                </p>
-
-                                <div className="flex justify-between items-center mt-5">
-
-                                    <span className="font-bold text-teal-600">
-                                        ${art.price}
-                                    </span>
-
-                                    <Link
-                                        href={`/artwork/${art.artworkId}`}
-                                        className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition"
-                                    >
-                                        View Details
-                                    </Link>
-
-                                </div>
-
-                            </div>
+                            <span className="text-xs bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-sm">
+                                Purchased
+                            </span>
 
                         </div>
 
-                    ))}
+                    </div>
 
-                </div>
+                </Link>
 
-            )}
+            ))}
 
         </div>
     );

@@ -3,14 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import ArtworkSkeleton from "../components/ArtworkSkeleton";
+import { useSearchParams } from "next/navigation";
 
 const BrowseArtworks = () => {
+
+
+    const searchParams = useSearchParams();
+    const artCategory = searchParams.get("category");
     const [artworks, setArtworks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("");
     const [maxPrice, setMaxPrice] = useState(1000);
     const [sort, setSort] = useState("");
+
+
 
     useEffect(() => {
         const fetchArtworks = async () => {
@@ -28,6 +35,13 @@ const BrowseArtworks = () => {
 
         fetchArtworks();
     }, []);
+
+
+    useEffect(() => {
+        if (artCategory) {
+            setCategory(artCategory);
+        }
+    }, [artCategory]);
 
     const filteredArtworks = useMemo(() => {
         let filtered = [...artworks];

@@ -1,6 +1,9 @@
 "use client";
 
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
     FaShoppingBag,
     FaImages,
@@ -9,6 +12,73 @@ import {
 } from "react-icons/fa";
 
 const UserDashboard = () => {
+
+    const { data: session } = authClient.useSession();
+    const user = session?.user;
+
+    const [dashboard, setDashboard] = useState({
+        totalPurchased: 0,
+        totalTransactions: 0,
+        totalSpent: 0,
+        subscriptionTier: "Free",
+        recentPurchases: [],
+    });
+    const [loading, setLoading] = useState(true);
+    const [recentPurchase, setRecentPurchase] = useState([]);
+
+    useEffect(() => {
+        if (!user?.email) return;
+
+        const fetchDashboard = async () => {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/user/${user.email}`
+                );
+
+                const data = await res.json();
+
+                setDashboard(data);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboard();
+    }, [user]);
+
+    useEffect(() => {
+        if (!user?.email) return;
+
+        const fetchRecentPurchase = async () => {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`
+                );
+
+                const data = await res.json();
+
+                setRecentPurchase(data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchRecentPurchase();
+    }, [user]);
+
+
+    if (loading) {
+        return (
+            <div className="p-10 text-center">
+                <ArtworkSkeleton />
+            </div>
+        );
+
+    }
+
+
     return (
         <div className="p-6">
 
@@ -30,9 +100,8 @@ const UserDashboard = () => {
                             <p className="text-slate-500 text-sm">
                                 Purchased Artworks
                             </p>
-
                             <h2 className="text-3xl font-bold mt-2">
-                                8
+                                {dashboard?.totalPurchased || 0}
                             </h2>
                         </div>
 
@@ -42,23 +111,7 @@ const UserDashboard = () => {
                     </div>
                 </div>
 
-                <div className="bg-white border rounded-xl p-6 shadow-sm">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="text-slate-500 text-sm">
-                                Purchase History
-                            </p>
 
-                            <h2 className="text-3xl font-bold mt-2">
-                                12
-                            </h2>
-                        </div>
-
-                        <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
-                            <FaShoppingBag className="text-green-600 text-xl" />
-                        </div>
-                    </div>
-                </div>
 
                 <div className="bg-white border rounded-xl p-6 shadow-sm">
                     <div className="flex justify-between items-center">
@@ -68,7 +121,7 @@ const UserDashboard = () => {
                             </p>
 
                             <h2 className="text-3xl font-bold mt-2">
-                                $540
+                                ${dashboard?.totalSpent || 0}
                             </h2>
                         </div>
 
@@ -78,23 +131,7 @@ const UserDashboard = () => {
                     </div>
                 </div>
 
-                <div className="bg-white border rounded-xl p-6 shadow-sm">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="text-slate-500 text-sm">
-                                Current Plan
-                            </p>
 
-                            <h2 className="text-2xl font-bold mt-2">
-                                Free
-                            </h2>
-                        </div>
-
-                        <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center">
-                            <FaCrown className="text-purple-600 text-xl" />
-                        </div>
-                    </div>
-                </div>
 
             </div>
 
@@ -126,28 +163,38 @@ const UserDashboard = () => {
                         </thead>
 
                         <tbody>
+                            {recentPurchase.length > 0 ? (
+                                recentPurchase.slice(0, 5).map((purchase) => (
+                                    <tr key={purchase._id} className="border-b">
+                                        <td className="py-3">
+                                            {purchase.artworkName}
+                                        </td>
 
-                            <tr className="border-b">
-                                <td className="py-3">Ocean Dream</td>
-                                <td>Sarah Khan</td>
-                                <td>12 Jul 2026</td>
-                                <td>$120</td>
-                            </tr>
+                                        <td>
+                                            {purchase.artist}
+                                        </td>
 
-                            <tr className="border-b">
-                                <td className="py-3">Sunset Hills</td>
-                                <td>John Smith</td>
-                                <td>08 Jul 2026</td>
-                                <td>$95</td>
-                            </tr>
+                                        <td>
+                                            {new Date(
+                                                purchase.purchaseDate
+                                            ).toLocaleDateString()}
+                                        </td>
 
-                            <tr>
-                                <td className="py-3">Abstract Flow</td>
-                                <td>Emily Davis</td>
-                                <td>02 Jul 2026</td>
-                                <td>$180</td>
-                            </tr>
-
+                                        <td className="font-semibold text-teal-600">
+                                            ${purchase.price}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={4}
+                                        className="text-center py-6 text-gray-500"
+                                    >
+                                        No purchases yet.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
 
                     </table>
@@ -162,14 +209,27 @@ const UserDashboard = () => {
                     <h2 className="text-xl font-semibold mb-5">
                         Subscription Overview
                     </h2>
-
                     <div className="space-y-4">
 
-                        <div className="flex justify-between items-center border rounded-lg p-4">
+                        {/* Free Plan */}
+                        <div
+                            className={`border rounded-lg p-4 flex justify-between items-center transition
+        ${dashboard?.subscriptionTier?.toLowerCase() === "free"
+                                    ? "border-blue-500 bg-blue-50"
+                                    : "border-gray-200"
+                                }`}
+                        >
                             <div>
-                                <h3 className="font-semibold">
-                                    Free Plan
-                                </h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">Free Plan</h3>
+
+                                    {dashboard?.subscriptionTier?.toLowerCase() === "free" && (
+                                        <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+                                            Current Plan
+                                        </span>
+                                    )}
+                                </div>
+
                                 <p className="text-sm text-slate-500">
                                     Max 3 purchases
                                 </p>
@@ -180,32 +240,60 @@ const UserDashboard = () => {
                             </span>
                         </div>
 
-                        <div className="flex justify-between items-center border rounded-lg p-4">
+                        {/* Pro Plan */}
+                        <div
+                            className={`border rounded-lg p-4 flex justify-between items-center transition
+        ${dashboard?.subscriptionTier?.toLowerCase() === "pro"
+                                    ? "border-green-500 bg-green-50"
+                                    : "border-gray-200"
+                                }`}
+                        >
                             <div>
-                                <h3 className="font-semibold">
-                                    Pro
-                                </h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">Pro</h3>
+
+                                    {dashboard?.subscriptionTier?.toLowerCase() === "pro" && (
+                                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">
+                                            Current Plan
+                                        </span>
+                                    )}
+                                </div>
+
                                 <p className="text-sm text-slate-500">
                                     Max 9 purchases
                                 </p>
                             </div>
 
-                            <span className="font-bold text-blue-600">
+                            <span className="font-bold text-green-600">
                                 $9.99
                             </span>
                         </div>
 
-                        <div className="flex justify-between items-center border rounded-lg p-4">
+                        {/* Premium Plan */}
+                        <div
+                            className={`border rounded-lg p-4 flex justify-between items-center transition
+        ${dashboard?.subscriptionTier?.toLowerCase() === "premium"
+                                    ? "border-purple-500 bg-purple-50"
+                                    : "border-gray-200"
+                                }`}
+                        >
                             <div>
-                                <h3 className="font-semibold">
-                                    Premium
-                                </h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">Premium</h3>
+
+                                    {dashboard?.subscriptionTier?.toLowerCase() === "premium" && (
+                                        <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">
+                                            Current Plan
+                                        </span>
+                                    )}
+                                </div>
+
                                 <p className="text-sm text-slate-500">
                                     Unlimited purchases
                                 </p>
                             </div>
 
-                            <span className="font-bold text-blue-600">
+                            <span className="font-bold text-purple-600">
                                 $19.99
                             </span>
                         </div>

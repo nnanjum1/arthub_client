@@ -75,7 +75,7 @@ const AddArtwork = () => {
                 throw new Error(saveData.message);
             }
 
-            toast.success("Artwork added successfully");
+            toast.success("Artwork added status pending");
 
             e.target.reset();
             setImage(null);
