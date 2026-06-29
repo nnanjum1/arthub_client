@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import AdminSidebar from "@/app/components/AdminSidebar";
+import LoginCard from "@/app/components/Logincard";
+import { authClient } from "@/lib/auth-client";
 
 export default function AdminLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
