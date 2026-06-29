@@ -1,6 +1,7 @@
 "use client";
 
 import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import LoginCard from "@/app/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -31,8 +32,16 @@ const UserDashboard = () => {
 
         const fetchDashboard = async () => {
             try {
+                const { data: tokenData } = await authClient.token();
+
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/user/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/user/${user.email}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            authorization: `Bearer ${tokenData?.token}`,
+                        },
+                    }
                 );
 
                 const data = await res.json();

@@ -26,18 +26,19 @@ const ArtistDashboard = () => {
 
         const fetchDashboard = async () => {
 
-            const { data: tokenData } = await authClient.token()
 
             try {
 
+                const { data: tokenData } = await authClient.token();
+
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/artist-dashboard/${email}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'authorization': `Bearer ${tokenData?.token}`
-                    },
-                }
+                    `${process.env.NEXT_PUBLIC_API_URL}/artist-dashboard/${email}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            authorization: `Bearer ${tokenData?.token}`,
+                        },
+                    }
                 );
 
                 const data = await res.json();

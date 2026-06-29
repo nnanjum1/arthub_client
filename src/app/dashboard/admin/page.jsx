@@ -8,6 +8,7 @@ import {
     FaDollarSign,
     FaShoppingCart,
 } from "react-icons/fa";
+
 import {
     ResponsiveContainer,
     BarChart,
@@ -17,23 +18,20 @@ import {
     Tooltip,
     CartesianGrid,
     LabelList,
-} from "recharts";
-
-import {
     PieChart,
     Pie,
     Cell,
 } from "recharts";
 
+import { authClient } from "@/lib/auth-client";
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import LoginCard from "@/app/components/Logincard";
+
 const AdminDashboard = () => {
+    const { data: session } = authClient.useSession();
+
     const [loading, setLoading] = useState(true);
 
-    const [stats, setStats] = useState({
-        totalUsers: 0,
-        totalArtists: 0,
-        artworksSold: 0,
-        totalRevenue: 0,
-    });
     const colors = [
         "#14b8a6",
         "#8b5cf6",
@@ -42,76 +40,141 @@ const AdminDashboard = () => {
         "#10b981",
         "#ef4444",
     ];
+
+    const [stats, setStats] = useState({
+        totalUsers: 0,
+        totalArtists: 0,
+        artworksSold: 0,
+        totalRevenue: 0,
+    });
+
     const [salesData, setSalesData] = useState([]);
     const [categoryData, setCategoryData] = useState([]);
-    const chartData = salesData.map((item) => ({
-        month: new Date(2026, item._id.month - 1).toLocaleString("default", {
-            month: "short",
-        }),
-        total: item.total,
-    }));
-
     const [recentArtworks, setRecentArtworks] = useState([]);
     const [recentTransactions, setRecentTransactions] = useState([]);
 
+    const chartData = Array.isArray(salesData)
+        ? salesData.map((item) => ({
+            month: new Date(
+                2026,
+                item?._id?.month - 1
+            ).toLocaleString("default", {
+                month: "short",
+            }),
+            total: item?.total || 0,
+        }))
+        : [];
+
     useEffect(() => {
+        if (!session) {
+            setLoading(false);
+            return;
+        }
+
         const fetchDashboard = async () => {
             try {
+                setLoading(true);
+
+                const { data: tokenData } = await authClient.token();
+
+                if (!tokenData?.token) {
+                    console.log("No JWT token found.");
+                    setLoading(false);
+                    return;
+                }
+
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`
+                    `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            authorization: `Bearer ${tokenData.token}`,
+                        },
+                    }
                 );
+
+                if (!res.ok) {
+                    console.log("Dashboard Error:", res.status);
+
+                    setStats({
+                        totalUsers: 0,
+                        totalArtists: 0,
+                        artworksSold: 0,
+                        totalRevenue: 0,
+                    });
+
+                    setSalesData([]);
+                    setCategoryData([]);
+                    setRecentArtworks([]);
+                    setRecentTransactions([]);
+
+                    return;
+                }
 
                 const data = await res.json();
 
-                setStats(data.stats);
-                setSalesData(data.salesChart);
-                setCategoryData(data.categoryChart);
-                setRecentArtworks(data.recentArtworks);
-                setRecentTransactions(data.recentTransactions);
+                console.log(data);
+
+                setStats(
+                    data.stats || {
+                        totalUsers: 0,
+                        totalArtists: 0,
+                        artworksSold: 0,
+                        totalRevenue: 0,
+                    }
+                );
+
+                setSalesData(
+                    Array.isArray(data.salesChart)
+                        ? data.salesChart
+                        : []
+                );
+
+                setCategoryData(
+                    Array.isArray(data.categoryChart)
+                        ? data.categoryChart
+                        : []
+                );
+
+                setRecentArtworks(
+                    Array.isArray(data.recentArtworks)
+                        ? data.recentArtworks
+                        : []
+                );
+
+                setRecentTransactions(
+                    Array.isArray(data.recentTransactions)
+                        ? data.recentTransactions
+                        : []
+                );
+
             } catch (err) {
-                console.log(err);
+                console.error(err);
+
+                setSalesData([]);
+                setCategoryData([]);
+                setRecentArtworks([]);
+                setRecentTransactions([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDashboard();
-    }, []);
 
-    useEffect(() => {
-        const fetchArtworks = async () => {
-            try {
-                const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/artworks`
-                );
+    }, [session]);
 
-                const data = await res.json();
-                setRecentArtworks(data);
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchArtworks();
-    }, []);
-
+    if (!session || session.user?.role !== "admin") {
+        return <LoginCard />;
+    }
     if (loading) {
         return (
             <div className="w-11/12 mx-auto py-10">
-                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div
-                            key={i}
-                            className="h-36 rounded-xl bg-gray-200 animate-pulse"
-                        />
-                    ))}
-                </div>
+                <ArtworkSkeleton />
             </div>
         );
     }
-
     return (
         <div className="w-11/12 mx-auto py-8">
 

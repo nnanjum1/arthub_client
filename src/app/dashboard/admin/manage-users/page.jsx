@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ManageUsers = () => {
+    const { data: session } = authClient.useSession();
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [search, setSearch] = useState("");
@@ -39,8 +40,10 @@ const ManageUsers = () => {
     };
 
     useEffect(() => {
+        if (!session) return;
+
         fetchUsers();
-    }, []);
+    }, [session]);
 
     useEffect(() => {
         const keyword = search.toLowerCase();
@@ -91,20 +94,12 @@ const ManageUsers = () => {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center py-20">
-                <ArtworkSkeleton />
-            </div>
-        );
+    if (!session) {
+        return <ArtworkSkeleton />;
     }
 
-    if (!session || session?.user?.role !== 'admin') {
-        return (
-            <div >
-                <LoginCard />
-            </div>
-        );
+    if (session.user?.role !== "admin") {
+        return <LoginCard />;
     }
 
     return (
