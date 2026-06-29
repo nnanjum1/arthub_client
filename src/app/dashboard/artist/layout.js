@@ -3,9 +3,22 @@
 import { useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
+import LoginCard from "@/app/components/Logincard";
+import { authClient } from "@/lib/auth-client";
 
 export default function ArtistLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const { data: session } = authClient.useSession();
+    console.log(session)
+
+    if (!session || session?.user?.role !== 'artist') {
+        return (
+            <div >
+                <LoginCard />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex bg-slate-50">

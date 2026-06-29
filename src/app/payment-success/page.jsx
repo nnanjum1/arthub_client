@@ -16,6 +16,8 @@ export default function PaymentSuccess() {
                     console.log("No session id");
                     return;
                 }
+                const { data: tokenData } = await authClient.token()
+
 
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL}/verify-payment`,
@@ -23,6 +25,8 @@ export default function PaymentSuccess() {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            'authorization': `Bearer ${tokenData?.token}`
+
                         },
                         body: JSON.stringify({ sessionId }),
                     }

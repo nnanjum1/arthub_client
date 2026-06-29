@@ -1,21 +1,32 @@
 
 "use client";
 
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ManageArtworks = () => {
     const [artworks, setArtworks] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const { data: session } = authClient.useSession();
+    console.log(session)
     useEffect(() => {
         fetchArtworks();
     }, []);
 
     const fetchArtworks = async () => {
+
+        const { data: tokenData } = await authClient.token()
+
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks`
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'authorization': `Bearer ${tokenData?.token}`
+                },
+            }
             );
 
             const data = await res.json();
@@ -28,13 +39,30 @@ const ManageArtworks = () => {
         }
     };
 
+    if (!session || session?.user?.role !== 'admin') {
+        return (
+            <div >
+                <LoginCard />
+            </div>
+        );
+    }
+
     const approveArtwork = async (id) => {
+        const { data: tokenData } = await authClient.token()
+
         try {
             const res = await fetch(
+
+
                 `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks/approve/${id} `,
                 {
                     method: "PATCH",
-                }
+                    headers: {
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
+                },
+
+
             );
 
             if (!res.ok) {
@@ -56,11 +84,16 @@ const ManageArtworks = () => {
     };
 
     const rejectArtwork = async (id) => {
+        const { data: tokenData } = await authClient.token()
+
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks/reject/${id} `,
                 {
                     method: "PATCH",
+                    headers: {
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
                 }
             );
 
@@ -84,12 +117,16 @@ const ManageArtworks = () => {
 
     const deleteArtwork = async (id) => {
         if (!confirm("Delete this artwork?")) return;
+        const { data: tokenData } = await authClient.token()
 
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks/${id} `,
                 {
                     method: "DELETE",
+                    headers: {
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
                 }
             );
 
@@ -110,10 +147,12 @@ const ManageArtworks = () => {
     if (loading) {
         return (
             <div className="text-center py-20">
-                Loading...
+                <ArtworkSkeleton />
             </div>
         );
     }
+
+
 
     return (
         <div className="w-[95%] mx-auto py-8">

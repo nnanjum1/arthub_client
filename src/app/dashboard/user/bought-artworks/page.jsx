@@ -16,10 +16,19 @@ const BoughtArtWorks = () => {
         if (!user?.email) return;
 
         const fetchPurchasedArtworks = async () => {
+            const { data: tokenData } = await authClient.token()
+
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`
-                );
+                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
+                    }
+                )
 
                 const data = await res.json();
                 setArtworks(data);
@@ -37,6 +46,14 @@ const BoughtArtWorks = () => {
         return (
             <div className="flex justify-center py-20">
                 <ArtworkSkeleton />            </div>
+        );
+    }
+
+    if (!session || session?.user?.role !== 'user') {
+        return (
+            <div >
+                <LoginCard />
+            </div>
         );
     }
 

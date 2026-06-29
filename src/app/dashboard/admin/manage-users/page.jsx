@@ -1,5 +1,6 @@
 "use client";
 
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -10,9 +11,18 @@ const ManageUsers = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchUsers = async () => {
+        const { data: tokenData } = await authClient.token()
+
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/user`
+                `${process.env.NEXT_PUBLIC_API_URL}/user`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'authorization': `Bearer ${tokenData?.token}`
+
+                },
+            }
             );
 
             const data = await res.json();
@@ -43,6 +53,8 @@ const ManageUsers = () => {
     }, [search, users]);
 
     const changeRole = async (email, role) => {
+        const { data: tokenData } = await authClient.token()
+
         try {
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/user/role/${email}`,
@@ -50,6 +62,8 @@ const ManageUsers = () => {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+
                     },
                     body: JSON.stringify({ role }),
                 }
@@ -78,7 +92,15 @@ const ManageUsers = () => {
     if (loading) {
         return (
             <div className="flex justify-center py-20">
-                Loading...
+                <ArtworkSkeleton />
+            </div>
+        );
+    }
+
+    if (!session || session?.user?.role !== 'admin') {
+        return (
+            <div >
+                <LoginCard />
             </div>
         );
     }

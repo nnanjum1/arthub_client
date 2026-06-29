@@ -74,13 +74,18 @@ const EditProfile = () => {
 
         try {
             setLoading(true);
+            const { data: tokenData } = await authClient.token()
+
 
             const res = await fetch(
+
                 `${process.env.NEXT_PUBLIC_API_URL}/user/update-profile`,
                 {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+
                     },
                     body: JSON.stringify({
                         email: user.email,
@@ -114,12 +119,10 @@ const EditProfile = () => {
         }
     };
 
-    if (!user) {
+    if (!session || session?.user?.role !== 'user') {
         return (
-            <div className="min-h-[60vh] flex items-center justify-center">
-                <h2 className="text-gray-600 font-semibold">
-                    Please login first
-                </h2>
+            <div >
+                <LoginCard />
             </div>
         );
     }

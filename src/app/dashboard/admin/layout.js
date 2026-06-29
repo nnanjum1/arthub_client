@@ -6,7 +6,16 @@ import AdminSidebar from "@/app/components/AdminSidebar";
 
 export default function AdminLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { data: session } = authClient.useSession();
+    console.log(session)
 
+    if (!session || session?.user?.role !== 'admin') {
+        return (
+            <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
+                <LoginCard />
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen flex bg-slate-50">
 
@@ -16,6 +25,8 @@ export default function AdminLayout({ children }) {
             />
 
             <div className="flex-1 min-w-0">
+
+
 
 
                 <div className="md:hidden p-4 border-b bg-white">

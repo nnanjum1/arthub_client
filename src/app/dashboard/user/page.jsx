@@ -52,9 +52,17 @@ const UserDashboard = () => {
         if (!user?.email) return;
 
         const fetchRecentPurchase = async () => {
+            const { data: tokenData } = await authClient.token()
+
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
+                }
                 );
 
                 const data = await res.json();
@@ -76,6 +84,14 @@ const UserDashboard = () => {
             </div>
         );
 
+    }
+
+    if (!session || session?.user?.role !== 'user') {
+        return (
+            <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
+                <LoginCard />
+            </div>
+        );
     }
 
 

@@ -8,6 +8,22 @@ import {
     FaDollarSign,
     FaShoppingCart,
 } from "react-icons/fa";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    LabelList,
+} from "recharts";
+
+import {
+    PieChart,
+    Pie,
+    Cell,
+} from "recharts";
 
 const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
@@ -18,10 +34,22 @@ const AdminDashboard = () => {
         artworksSold: 0,
         totalRevenue: 0,
     });
-
+    const colors = [
+        "#14b8a6",
+        "#8b5cf6",
+        "#3b82f6",
+        "#f97316",
+        "#10b981",
+        "#ef4444",
+    ];
     const [salesData, setSalesData] = useState([]);
     const [categoryData, setCategoryData] = useState([]);
-
+    const chartData = salesData.map((item) => ({
+        month: new Date(2026, item._id.month - 1).toLocaleString("default", {
+            month: "short",
+        }),
+        total: item.total,
+    }));
 
     const [recentArtworks, setRecentArtworks] = useState([]);
     const [recentTransactions, setRecentTransactions] = useState([]);
@@ -223,8 +251,44 @@ const AdminDashboard = () => {
                     <h2 className="text-xl font-semibold mb-5">
                         Sales Overview
                     </h2>
+                    <ResponsiveContainer width="100%" height={320}>
+                        <BarChart
+                            data={chartData}
+                            barSize={30} // Reduce width
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
 
+                            <XAxis
+                                dataKey="month"
+                                label={{
+                                    value: "Month",
+                                    position: "insideBottom",
+                                    offset: -5,
+                                }}
+                            />
 
+                            <YAxis
+                                label={{
+                                    value: "Revenue ($)",
+                                    angle: -90,
+                                    position: "insideLeft",
+                                }}
+                            />
+
+                            <Tooltip />
+
+                            <Bar
+                                dataKey="total"
+                                fill="#14b8a6"
+                                radius={[8, 8, 0, 0]}
+                            >
+                                <LabelList
+                                    dataKey="total"
+                                    position="top"
+                                />
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
 
                 </div>
 
@@ -234,7 +298,24 @@ const AdminDashboard = () => {
                         Artworks by Category
                     </h2>
 
+                    <PieChart width={350} height={300}>
+                        <Pie
+                            data={categoryData}
+                            dataKey="count"
+                            nameKey="_id"
+                            outerRadius={100}
+                            label
+                        >
+                            {categoryData.map((entry, index) => (
+                                <Cell
+                                    key={index}
+                                    fill={colors[index % colors.length]}
+                                />
+                            ))}
+                        </Pie>
 
+                        <Tooltip />
+                    </PieChart>
                 </div>
 
             </div>
@@ -463,6 +544,52 @@ const AdminDashboard = () => {
                         View All →
                     </Link>
 
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b">
+                                <th className="text-left py-3">Buyer</th>
+                                <th className="text-left py-3">Artwork</th>
+                                <th className="text-left py-3">Amount</th>
+                                <th className="text-left py-3">Status</th>
+                                <th className="text-left py-3">Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {recentTransactions.map((item) => (
+                                <tr
+                                    key={item._id}
+                                    className="border-b"
+                                >
+                                    <td className="py-3">
+                                        {item.buyerEmail}
+                                    </td>
+
+                                    <td>
+                                        {item.artworkTitle}
+                                    </td>
+
+                                    <td>
+                                        ${item.amount}
+                                    </td>
+
+                                    <td>
+                                        <span className="text-green-600 font-semibold">
+                                            {item.paymentStatus}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {new Date(
+                                            item.createdAt
+                                        ).toLocaleDateString()}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
 
 

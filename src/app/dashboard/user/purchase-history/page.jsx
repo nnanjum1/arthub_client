@@ -17,11 +17,18 @@ const PurchaseHistory = () => {
         if (!user) return;
 
         const fetchHistory = async () => {
+            const { data: tokenData } = await authClient.token()
 
             try {
 
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
+                }
                 );
 
                 const data = await res.json();
@@ -43,6 +50,15 @@ const PurchaseHistory = () => {
         return (
             <div className="text-center py-10">
                 <ArtworkSkeleton />
+            </div>
+        );
+
+    }
+
+    if (!session || session?.user?.role !== 'user') {
+        return (
+            <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
+                <LoginCard />
             </div>
         );
     }

@@ -48,6 +48,8 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
     ];
 
+
+
     return (
         <>
             {sidebarOpen && (
@@ -68,7 +70,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             >
                 <div className="p-6 border-b flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-blue-700">
-                        User Panel
+                        Admin Panel
                     </h2>
 
                     <button

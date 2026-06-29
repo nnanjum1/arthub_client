@@ -1,5 +1,6 @@
 "use client";
 
+import LoginCard from "@/app/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -24,9 +25,19 @@ const ArtistDashboard = () => {
         if (!email) return;
 
         const fetchDashboard = async () => {
+
+            const { data: tokenData } = await authClient.token()
+
             try {
+
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/artist-dashboard/${email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/artist-dashboard/${email}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
+                }
                 );
 
                 const data = await res.json();
@@ -41,6 +52,17 @@ const ArtistDashboard = () => {
 
         fetchDashboard();
     }, [email]);
+
+
+
+
+    if (!session || session?.user?.role !== 'artist') {
+        return (
+            <div >
+                <LoginCard />
+            </div>
+        );
+    }
     return (
         <div className="w-[95%] mx-auto">
 

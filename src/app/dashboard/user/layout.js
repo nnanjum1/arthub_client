@@ -7,6 +7,16 @@ import UserSidebar from "@/app/components/UserSidebar";
 export default function UserLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const { data: session } = authClient.useSession();
+    console.log(session)
+
+    if (!session || session?.user?.role !== 'user') {
+        return (
+            <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
+                <LoginCard />
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen flex bg-slate-50">
 

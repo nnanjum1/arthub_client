@@ -1,16 +1,19 @@
 "use client";
 
+import LoginCard from "@/app/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 const AddArtwork = () => {
+
     const [preview, setPreview] = useState("");
     const [image, setImage] = useState(null);
     const { data: session } = authClient.useSession();
     console.log(session)
 
     const user = session?.user;
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,9 +30,12 @@ const AddArtwork = () => {
             return;
         }
 
+
         try {
             const imageFormData = new FormData();
             imageFormData.append("image", image);
+
+
 
             const res = await fetch(
                 `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
@@ -47,6 +53,7 @@ const AddArtwork = () => {
 
             const imageUrl = imageData.data.url;
 
+
             const artworkData = {
                 artistName: user?.name,
                 artistEmail: user?.email,
@@ -61,13 +68,21 @@ const AddArtwork = () => {
                 availability: "available",
             };
 
+            const { data: tokenData } = await authClient.token()
+
             const saveArts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/artworks`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    'authorization': `Bearer ${tokenData?.token}`
+
                 },
+
+
                 body: JSON.stringify(artworkData),
             });
+
+
 
             const saveData = await saveArts.json();
 
@@ -93,6 +108,17 @@ const AddArtwork = () => {
             setPreview(URL.createObjectURL(file));
         }
     };
+
+
+
+
+    if (!session || session?.user?.role !== 'artist') {
+        return (
+            <div >
+                <LoginCard />
+            </div>
+        );
+    }
     return (
         <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
 

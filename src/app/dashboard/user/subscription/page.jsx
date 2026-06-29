@@ -8,6 +8,7 @@ import {
     FaCrown,
     FaGem,
 } from "react-icons/fa";
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
 
 const Subscription = () => {
     const { data: session } = authClient.useSession();
@@ -23,9 +24,17 @@ const Subscription = () => {
         }
 
         const fetchUser = async () => {
+            const { data: tokenData } = await authClient.token()
+
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/user/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/user/${user.email}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+                    },
+                }
                 );
 
                 if (res.ok) {
@@ -95,9 +104,7 @@ const Subscription = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-[70vh]">
-                <h2 className="text-lg font-semibold">
-                    Loading Subscription...
-                </h2>
+                <ArtworkSkeleton />
             </div>
         );
     }

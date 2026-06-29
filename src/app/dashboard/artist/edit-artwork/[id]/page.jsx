@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
 
 const EditArtwork = () => {
     const { id } = useParams();
@@ -20,11 +21,16 @@ const EditArtwork = () => {
         image: "",
     });
 
+    const { data: session } = authClient.useSession();
+    console.log(session)
+
+    const user = session?.user;
+
     useEffect(() => {
         const fetchArtwork = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:5000/artworks/${id}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks/${id}`
                 );
 
                 const data = await res.json();
@@ -92,12 +98,16 @@ const EditArtwork = () => {
                 price: Number(formData.price),
             };
 
+            const { data: tokenData } = await authClient.token()
+
             const res = await fetch(
-                `http://localhost:5000/artworks/${id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/artworks/${id}`,
                 {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
+                        'authorization': `Bearer ${tokenData?.token}`
+
                     },
                     body: JSON.stringify(updatedArtwork),
                 }
@@ -118,7 +128,15 @@ const EditArtwork = () => {
     if (loading) {
         return (
             <div className="w-[90%] mx-auto py-10">
-                Loading...
+                <ArtworkSkeleton />
+            </div>
+        );
+    }
+
+    if (!session || session?.user?.role !== 'artist') {
+        return (
+            <div >
+                <LoginCard />
             </div>
         );
     }
