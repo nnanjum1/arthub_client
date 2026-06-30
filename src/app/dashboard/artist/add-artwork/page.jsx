@@ -17,6 +17,8 @@ const AddArtwork = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        setIsSubmitting(true);
 
         const formData = new FormData(e.target);
 
@@ -98,6 +100,9 @@ const AddArtwork = () => {
         } catch (error) {
             console.error(error);
             toast.error("Failed to add artwork");
+        }
+        finally {
+            setIsSubmitting(false);
         }
     };
     const handleImageChange = (e) => {
@@ -226,9 +231,14 @@ const AddArtwork = () => {
 
                 <button
                     type="submit"
-                    className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700"
+                    disabled={isSubmitting}
+                    className={`px-6 py-3 rounded-lg text-white transition
+        ${isSubmitting
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-teal-600 hover:bg-teal-700"
+                        }`}
                 >
-                    Add Artwork
+                    {isSubmitting ? "Uploading..." : "Add Artwork"}
                 </button>
 
             </form>

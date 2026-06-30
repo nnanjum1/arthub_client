@@ -491,7 +491,7 @@ const ArtworkDetails = () => {
                                                     onClick={() => {
                                                         setEditingCommentId(item._id);
                                                         setEditCommentText(item.comment);
-                                                        setDeletingCommentId(null); // Close delete card if switching to edit
+                                                        setDeletingCommentId(null);
                                                     }}
                                                     className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded hover:bg-blue-600 hover:text-white"
                                                 >
@@ -501,7 +501,7 @@ const ArtworkDetails = () => {
                                                 <button
                                                     onClick={() => {
                                                         setDeletingCommentId(item._id);
-                                                        setEditingCommentId(null); // Close edit card if switching to delete
+                                                        setEditingCommentId(null);
                                                     }}
                                                     className="text-xs bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded hover:bg-red-600 hover:text-white"
                                                 >
