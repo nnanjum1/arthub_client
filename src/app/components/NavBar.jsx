@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 export default function Navbar() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
-
+    const router = useRouter();
     const { data: session } = authClient.useSession();
     console.log(session)
 
@@ -19,6 +19,8 @@ export default function Navbar() {
         await authClient.signOut();
 
         toast.success("Logged out successfully");
+        router.push("/");
+
     };
 
     const getDashboardRoute = () => {
