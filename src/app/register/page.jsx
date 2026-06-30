@@ -6,8 +6,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [errors, setErrors] = useState({});
@@ -77,6 +79,7 @@ const RegisterPage = () => {
 
             console.log(data);
             toast.success("Registration successful!");
+            router.push("/");
 
             e.target.reset();
             setErrors({});
