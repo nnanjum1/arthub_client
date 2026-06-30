@@ -131,8 +131,13 @@ const AddArtwork = () => {
                 Add Artwork
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-
+            <form onSubmit={(e) => {
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return;
+                }
+                handleSubmit(e);
+            }} className="space-y-5">
                 <div>
                     <label className="block mb-2 font-medium">
                         Artwork Title
