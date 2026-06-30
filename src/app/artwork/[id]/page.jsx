@@ -461,7 +461,7 @@ const ArtworkDetails = () => {
                     <div className="mt-8">
                         <h3 className="text-xl font-semibold mb-4">Comments ({comments.length})</h3>
                         {comments.map((item) => {
-                            const canDeleteComment = isAdmin || (user && (user.email === item.userEmail || user.id === item.userId));
+                            const canDeleteComment = (user && (user.email === item.userEmail || user.id === item.userId));
 
                             return (
                                 <div
