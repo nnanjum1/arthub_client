@@ -11,6 +11,8 @@ const ManageArtworks = () => {
     const [artworks, setArtworks] = useState([]);
     const [loading, setLoading] = useState(true);
     const { data: session } = authClient.useSession();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     console.log(session)
     useEffect(() => {
         fetchArtworks();
@@ -117,30 +119,33 @@ const ManageArtworks = () => {
         }
     };
 
-    const deleteArtwork = async (id) => {
-        if (!confirm("Delete this artwork?")) return;
-        const { data: tokenData } = await authClient.token()
+    const deleteArtwork = async () => {
+        const id = selectedId;
+
+        const { data: tokenData } = await authClient.token();
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks/${id} `,
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/artworks/${id}`,
                 {
                     method: "DELETE",
                     headers: {
-                        'authorization': `Bearer ${tokenData?.token}`
+                        authorization: `Bearer ${tokenData?.token}`
                     },
                 }
             );
 
-            if (!res.ok) {
-                throw new Error();
-            }
+            if (!res.ok) throw new Error();
 
             toast.success("Artwork deleted");
 
             setArtworks((prev) =>
                 prev.filter((item) => item._id !== id)
             );
+
+            setShowDeleteModal(false);
+            setSelectedId(null);
+
         } catch {
             toast.error("Failed to delete artwork");
         }
@@ -177,7 +182,6 @@ const ManageArtworks = () => {
 
             <div className="bg-white rounded-2xl shadow-lg border overflow-hidden">
 
-                {/* Mobile & Tablet */}
                 <div className="lg:hidden p-4 space-y-4">
 
                     {artworks.length === 0 ? (
@@ -280,8 +284,10 @@ const ManageArtworks = () => {
                                     )}
 
                                     <button
-                                        onClick={() => deleteArtwork(item._id)}
-                                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
+                                        onClick={() => {
+                                            setSelectedId(item._id);
+                                            setShowDeleteModal(true);
+                                        }} className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm"
                                     >
                                         Delete
                                     </button>
@@ -296,7 +302,6 @@ const ManageArtworks = () => {
 
                 </div>
 
-                {/* Desktop */}
                 <div className="hidden lg:block overflow-x-auto">
 
                     <table className="min-w-full">
@@ -417,8 +422,10 @@ const ManageArtworks = () => {
                                                 )}
 
                                                 <button
-                                                    onClick={() => deleteArtwork(item._id)}
-                                                    className="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm"
+                                                    onClick={() => {
+                                                        setSelectedId(item._id);
+                                                        setShowDeleteModal(true);
+                                                    }} className="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm"
                                                 >
                                                     Delete
                                                 </button>
@@ -433,9 +440,47 @@ const ManageArtworks = () => {
 
                             )}
 
+
                         </tbody>
 
                     </table>
+                    {showDeleteModal && (
+                        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+                            <div className="bg-white w-[90%] max-w-md rounded-xl p-6 shadow-xl">
+
+                                <h2 className="text-xl font-bold text-slate-800">
+                                    Delete Artwork?
+                                </h2>
+
+                                <p className="text-slate-500 mt-2">
+                                    This action cannot be undone. Are you sure you want to delete this artwork?
+                                </p>
+
+                                <div className="flex justify-end gap-3 mt-6">
+
+                                    <button
+                                        onClick={() => {
+                                            setShowDeleteModal(false);
+                                            setSelectedId(null);
+                                        }}
+                                        className="px-4 py-2 border rounded-lg"
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        onClick={deleteArtwork}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
 
                 </div>
 
