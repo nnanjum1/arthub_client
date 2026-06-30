@@ -203,7 +203,17 @@ const BrowseArtworks = () => {
                 </div>
             )}
 
-            {!loading && filteredArtworks.length > 0 && (
+            {!loading && filteredArtworks.length === 0 ? (
+                <div className="text-center py-20">
+                    <h2 className="text-2xl font-semibold text-slate-700">
+                        No Artwork Found
+                    </h2>
+
+                    <p className="text-slate-500 mt-2">
+                        Try changing your search, category, or price filter.
+                    </p>
+                </div>
+            ) : (
                 <>
                     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                         {paginatedArtworks.map((artwork) => (
@@ -226,8 +236,6 @@ const BrowseArtworks = () => {
                             </Link>
                         ))}
                     </div>
-
-                    {/* Pagination here */}
                 </>
             )}
 
