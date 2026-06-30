@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 const AddArtwork = () => {
 
     const [preview, setPreview] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState(null);
     const { data: session } = authClient.useSession();
     console.log(session)
