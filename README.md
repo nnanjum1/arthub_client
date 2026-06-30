@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎨 ArtHub — Online Art Marketplace
 
-## Getting Started
+> A full-stack MERN-based marketplace platform connecting artists, collectors, and buyers through a secure and modern digital art ecosystem.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 🚀 Live Site: https://arthub-client-hzjp.vercel.app
+- 💻 Client Repo: https://github.com/nnanjum1/arthub_client.git
+- 🛠️ Server Repo: https://github.com/nnanjum1/arthub-server.git
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📌 Project Overview
 
-## Learn More
+ArtHub is a modern online art marketplace that allows artists to showcase and sell their artworks globally while enabling users to discover, purchase, and interact with digital art.
 
-To learn more about Next.js, take a look at the following resources:
+The platform implements **role-based authentication, Stripe payment integration, analytics dashboards, and a secure comment system**, simulating a real-world SaaS marketplace.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Purpose
 
-## Deploy on Vercel
+Traditional art buying is limited to physical galleries. ArtHub solves this by:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Providing global access to digital artworks  
+- Helping artists monetize their work  
+- Enabling secure online payments  
+- Implementing scalable marketplace architecture  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & Authorization
+- Email/password login system  
+- Google OAuth login  
+- JWT-based authentication  
+- Role-based access control (User / Artist / Admin)
+
+---
+
+### 🖼️ Artwork Marketplace
+- Browse all artworks publicly  
+- Search by title or artist  
+- Filter by category and price range  
+- Sort by newest and price  
+- Pagination support  
+- Artwork details page with full info  
+
+---
+
+### 💳 Payment System (Stripe)
+- Stripe Checkout integration  
+- Artwork purchase system  
+- Subscription tiers (Free / Pro / Premium)  
+- Purchase validation before checkout  
+- Transaction tracking system  
+
+---
+
+### 💬 Comment System
+- Only buyers can comment (purchase-based access)  
+- Add / edit / delete own comments  
+- Secure backend validation  
+- Real-time comment updates  
+
+---
+
+### 📊 Dashboard System
+
+#### 👤 User Dashboard
+- Purchase history  
+- Bought artworks gallery  
+- Subscription overview  
+
+#### 🎨 Artist Dashboard
+- Manage artworks (CRUD)  
+- Sales history  
+- Upload artworks (imgBB)  
+
+#### 🛡️ Admin Dashboard
+- Manage users (role control)  
+- Manage artworks  
+- View all transactions  
+- Analytics dashboard  
+
+---
+
+### 📈 Analytics
+- Sales chart  
+- Category distribution pie chart  
+- Revenue tracking  
+- Platform insights  
+
+---
+
+### 🎨 UI/UX Features
+- Fully responsive design  
+- Skeleton loading states  
+- Global error handling (404 + fallback UI)  
+- Clean modern UI with proper spacing  
+- Smooth navigation and routing  
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend
+- Next.js (App Router)
+- React.js
+- Tailwind CSS
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB (Atlas)
+- JWT Authentication
+- Stripe API
+
+### Services
+- imgBB (Image Uploads)  
+- Stripe (Payments)  
+- Betterauth
+
+---
+
+## 📦 NPM Packages
+
+### Client Side
+- next
+- react
+- tailwindcss
+- react-toastify
+
+
+### Server Side
+- express
+- mongodb
+- cors
+- dotenv
+- stripe
+- nodemon
