@@ -86,7 +86,7 @@ const EditProfile = () => {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`, // ✅ standard format
+                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         name,

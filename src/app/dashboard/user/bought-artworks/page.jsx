@@ -19,7 +19,6 @@ const BoughtArtWorks = () => {
 
             try {
                 const { data: tokenData } = await authClient.token()
-
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL}/purchase-history/${user.email}`,
                     {

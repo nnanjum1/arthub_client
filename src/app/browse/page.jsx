@@ -7,6 +7,8 @@ import { useSearchParams } from "next/navigation";
 
 const BrowseArtworks = () => {
 
+    const [artist, setArtist] = useState(null);
+
 
     const searchParams = useSearchParams();
     const artCategory = searchParams.get("category");
@@ -26,6 +28,14 @@ const BrowseArtworks = () => {
                 const data = await res.json();
 
                 setArtworks(data);
+                const artistRes = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/${encodeURIComponent(data.artistEmail)}`
+                );
+
+                if (artistRes.ok) {
+                    const artistData = await artistRes.json();
+                    setArtist(artistData);
+                }
             } catch (error) {
                 console.error(error);
             } finally {
@@ -210,7 +220,7 @@ const BrowseArtworks = () => {
                                 </h2>
 
                                 <p className="text-sm text-slate-500 mt-1">
-                                    By {artwork.artistName}
+                                    By {artist?.name || artwork.artistName}
                                 </p>
 
                                 <p className="text-teal-600 font-bold mt-3 text-lg">

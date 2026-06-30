@@ -8,6 +8,7 @@ import {
     FaHistory,
     FaUser,
     FaTimes,
+    FaHome,
 } from "react-icons/fa";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
@@ -15,9 +16,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
     const menuItems = [
         {
-            name: "Manage Artworks",
+            name: "Dashboard",
             path: "/dashboard/artist",
-            icon: <FaPaintBrush />,
+            icon: <FaHome />,
         },
 
         {

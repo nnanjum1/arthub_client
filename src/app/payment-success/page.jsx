@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function PaymentSuccess() {
     const searchParams = useSearchParams();

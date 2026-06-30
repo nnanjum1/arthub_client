@@ -11,7 +11,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 const ArtworkDetails = () => {
     const { id } = useParams();
     const router = useRouter();
-
+    const [artist, setArtist] = useState(null);
 
     const [showUpgradeCard, setShowUpgradeCard] = useState(false);
     const [upgradeMessage, setUpgradeMessage] = useState("");
@@ -93,6 +93,16 @@ const ArtworkDetails = () => {
 
                 const data = await res.json();
                 setArtwork(data);
+
+
+                const artistRes = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/${encodeURIComponent(data.artistEmail)}`
+                );
+
+                if (artistRes.ok) {
+                    const artistData = await artistRes.json();
+                    setArtist(artistData);
+                }
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to load artwork");
@@ -206,8 +216,7 @@ const ArtworkDetails = () => {
                             href={`/artist/${encodeURIComponent(artwork.artistEmail)}`}
                             className="text-teal-600 font-semibold hover:text-teal-700 hover:underline"
                         >
-                            {artwork.artistName}
-                        </Link>
+                            {artist?.name || artwork.artistName}                        </Link>
                     </p>
 
                     <p>
@@ -256,7 +265,7 @@ const ArtworkDetails = () => {
                             onClick={handlePurchase}
                             disabled={isArtist || isSold || isAdmin}
                             className={`px-6 py-3 rounded-lg text-white transition
-                            ${isArtist || isSold
+                            ${isArtist || isSold || isAdmin
                                     ? "bg-slate-400 cursor-not-allowed"
                                     : "bg-teal-600 hover:bg-teal-700"
                                 }`}
@@ -293,7 +302,7 @@ const ArtworkDetails = () => {
                             )
                         }
 
-                        {isOwner && (
+                        {isOwner && isArtist && (
                             <div className="flex gap-3">
                                 <Link
                                     href={`/dashboard/artist/edit-artwork/${artwork._id}`}

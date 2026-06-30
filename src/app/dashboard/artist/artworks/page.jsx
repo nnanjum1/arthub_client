@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DeleteModal from "@/app/components/DeleteModal";
 import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import { useRouter } from "next/navigation";
 
 const ManageArtWorks = () => {
     const { data: session } = authClient.useSession();
@@ -18,30 +19,70 @@ const ManageArtWorks = () => {
 
     const user = session?.user;
 
+    const router = useRouter();
+
+    const handleOpenDetails = (artwork) => {
+        if (artwork.status !== "Approved") {
+            toast.error(
+                artwork.status === "Pending"
+                    ? "This artwork is still pending approval"
+                    : "This artwork has been rejected"
+            );
+            return;
+        }
+
+        router.push(`/artwork/${artwork._id}`);
+    };
+
     useEffect(() => {
         if (!user?.email) return;
 
         const fetchArtworks = async () => {
             try {
+                const { data: tokenData } = await authClient.token();
+
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/artworks/artist/${user.email}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks/artist`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${tokenData?.token}`,
+                            "Content-Type": "application/json"
+                        },
+                    }
                 );
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error("Backend returned an error page:", errorText);
+                    toast.error(`Server error: ${res.status}`);
+                    return;
+                }
 
                 const data = await res.json();
                 setArtworks(data);
+
             } catch (error) {
+                console.error("Frontend Fetch Error:", error);
                 toast.error("Failed to load artworks");
             } finally {
                 setLoading(false);
             }
         };
-
         fetchArtworks();
     }, [user]);
 
     const openDeleteModal = (id) => {
         setSelectedId(id);
         setShowDeleteModal(true);
+    };
+
+    const handleEditClick = (artwork) => {
+        if (artwork.status !== "Approved") {
+            toast.warning("Artwork must be approved before editing");
+            return;
+        }
+
+        router.push(`/dashboard/artist/edit-artwork/${artwork._id}`);
     };
 
     const handleDelete = async () => {
@@ -119,7 +160,10 @@ const ManageArtWorks = () => {
                             key={artwork._id}
                             className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                         >
-                            <Link href={`/artwork/${artwork._id}`}>
+                            <div
+                                onClick={() => handleOpenDetails(artwork)}
+                                className="cursor-pointer"
+                            >
 
                                 <img
                                     src={artwork.image}
@@ -169,18 +213,17 @@ const ManageArtWorks = () => {
 
                                 </div>
 
-                            </Link>
+                            </div>
 
                             <div className="px-4 pb-4 mt-auto">
 
                                 <div className="grid grid-cols-2 gap-3">
-
-                                    <Link
-                                        href={`/dashboard/artist/edit-artwork/${artwork._id}`}
-                                        className="text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
+                                    <button
+                                        onClick={() => handleEditClick(artwork)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
                                     >
                                         Edit
-                                    </Link>
+                                    </button>
 
                                     <button
                                         onClick={() => openDeleteModal(artwork._id)}
