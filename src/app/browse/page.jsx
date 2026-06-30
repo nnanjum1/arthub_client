@@ -7,35 +7,36 @@ import { useSearchParams } from "next/navigation";
 
 const BrowseArtworks = () => {
 
-    const [artist, setArtist] = useState(null);
+    const ITEMS_PER_PAGE = 12;
 
+    const [currentPage, setCurrentPage] = useState(1);
 
     const searchParams = useSearchParams();
     const artCategory = searchParams.get("category");
+
     const [artworks, setArtworks] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("");
     const [maxPrice, setMaxPrice] = useState(1000);
     const [sort, setSort] = useState("");
 
-
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, category, maxPrice, sort]);
 
     useEffect(() => {
         const fetchArtworks = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/artworks`);
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/artworks`
+                );
+
                 const data = await res.json();
 
                 setArtworks(data);
-                const artistRes = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/users/${encodeURIComponent(data.artistEmail)}`
-                );
-
-                if (artistRes.ok) {
-                    const artistData = await artistRes.json();
-                    setArtist(artistData);
-                }
+                console.log("Fetched artworks:", data);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -46,16 +47,15 @@ const BrowseArtworks = () => {
         fetchArtworks();
     }, []);
 
-
     useEffect(() => {
         if (artCategory) {
             setCategory(artCategory);
         }
     }, [artCategory]);
 
+
     const filteredArtworks = useMemo(() => {
         let filtered = [...artworks];
-
 
         if (search) {
             filtered = filtered.filter(
@@ -69,18 +69,15 @@ const BrowseArtworks = () => {
             );
         }
 
-
         if (category) {
             filtered = filtered.filter(
                 (art) => art.category === category
             );
         }
 
-
         filtered = filtered.filter(
             (art) => Number(art.price) <= Number(maxPrice)
         );
-
 
         if (sort === "low-high") {
             filtered.sort((a, b) => a.price - b.price);
@@ -101,8 +98,29 @@ const BrowseArtworks = () => {
         return filtered;
     }, [artworks, search, category, maxPrice, sort]);
 
+
+
+    const totalPages = Math.ceil(
+        filteredArtworks.length / ITEMS_PER_PAGE
+    );
+
+    const paginatedArtworks = filteredArtworks.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+
+
+
+    useEffect(() => {
+        if (artCategory) {
+            setCategory(artCategory);
+        }
+    }, [artCategory]);
+
+
     return (
-        <div className="w-[95%] mx-auto py-10">
+        <div className="w-[95%] mx-auto min-h-screen py-10">
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -185,51 +203,73 @@ const BrowseArtworks = () => {
                 </div>
             )}
 
-            {!loading && filteredArtworks.length === 0 && (
-                <div className="text-center py-20">
-                    <h2 className="text-2xl font-semibold">
-                        No artworks found
-                    </h2>
+            {!loading && filteredArtworks.length > 0 && (
+                <>
+                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {paginatedArtworks.map((artwork) => (
+                            <Link
+                                key={artwork._id}
+                                href={`/artwork/${artwork._id}`}
+                                className="bg-white border rounded-xl overflow-hidden"
+                            >
+                                <img
+                                    src={artwork.image}
+                                    alt={artwork.title}
+                                    className="w-full h-56 object-cover"
+                                />
 
-                    <p className="text-slate-500 mt-2">
-                        Try changing your search or filters.
-                    </p>
-                </div>
+                                <div className="p-4">
+                                    <h2>{artwork.title}</h2>
+                                    <p>By {artwork.artistName}</p>
+                                    <p>${artwork.price}</p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Pagination here */}
+                </>
             )}
 
+            {!loading && totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
 
-            {!loading && filteredArtworks.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <button
+                        onClick={() =>
+                            setCurrentPage((prev) =>
+                                Math.max(prev - 1, 1)
+                            )
+                        }
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 border rounded disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
 
-                    {filteredArtworks.map((artwork) => (
-                        <Link
-                            key={artwork._id}
-                            href={`/artwork/${artwork._id}`}
-                            className="bg-white border rounded-xl overflow-hidden hover:shadow-lg transition duration-300"
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={`px-4 py-2 border rounded ${currentPage === index + 1
+                                ? "bg-teal-600 text-white"
+                                : "bg-white hover:bg-gray-100"
+                                }`}
                         >
-                            <img
-                                src={artwork.image}
-                                alt={artwork.title}
-                                className="w-full h-56 object-center"
-                            />
-
-                            <div className="p-4">
-
-                                <h2 className="font-semibold text-lg line-clamp-1">
-                                    {artwork.title}
-                                </h2>
-
-                                <p className="text-sm text-slate-500 mt-1">
-                                    By {artist?.name || artwork.artistName}
-                                </p>
-
-                                <p className="text-teal-600 font-bold mt-3 text-lg">
-                                    ${artwork.price}
-                                </p>
-
-                            </div>
-                        </Link>
+                            {index + 1}
+                        </button>
                     ))}
+
+                    <button
+                        onClick={() =>
+                            setCurrentPage((prev) =>
+                                Math.min(prev + 1, totalPages)
+                            )
+                        }
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 border rounded disabled:opacity-50"
+                    >
+                        Next
+                    </button>
 
                 </div>
             )}
