@@ -1,144 +1,271 @@
-# 🎨 ArtHub — Online Art Marketplace
+# 🎨 ArtHub
 
-> A full-stack MERN-based marketplace platform connecting artists, collectors, and buyers through a secure and modern digital art ecosystem.
+### Discover, Showcase, and Collect Exceptional Digital Artwork
 
----
+ArtHub is a full-stack online art marketplace where artists can showcase and sell their artwork while buyers can discover, purchase, and interact with creative works through a secure and modern platform.
 
-## 🌐 Live Demo
-
-- 🚀 Live Site: https://arthub-client-hzjp.vercel.app
-- 💻 Client Repo: https://github.com/nnanjum1/arthub_client.git
-- 🛠️ Server Repo: https://github.com/nnanjum1/arthub-server.git
+🌐 **Live Site:** https://arthub-client-hzjp.vercel.app
 
 ---
 
-## 📌 Project Overview
+# 📌 About the Project
 
-ArtHub is a modern online art marketplace that allows artists to showcase and sell their artworks globally while enabling users to discover, purchase, and interact with digital art.
+ArtHub is designed to bridge the gap between artists and art enthusiasts by providing a digital marketplace for buying and selling artwork. Artists can upload and manage their collections, while buyers can securely purchase artworks, leave reviews, and maintain their purchase history.
 
-The platform implements **role-based authentication, Stripe payment integration, analytics dashboards, and a secure comment system**, simulating a real-world SaaS marketplace.
-
----
-
-## 🎯 Purpose
-
-Traditional art buying is limited to physical galleries. ArtHub solves this by:
-
-- Providing global access to digital artworks  
-- Helping artists monetize their work  
-- Enabling secure online payments  
-- Implementing scalable marketplace architecture  
+The project demonstrates modern full-stack development using **Next.js**, **Node.js**, **Express.js**, **MongoDB**, **Better Auth**, **JWT**, and **Stripe**, with a focus on security, scalability, and user experience.
 
 ---
 
-## ✨ Key Features
+# 📋 Project Overview
 
-### 🔐 Authentication & Authorization
-- Email/password login system  
-- Google OAuth login  
-- JWT-based authentication  
-- Role-based access control (User / Artist / Admin)
+## 🎯 Objective
 
----
+The objective of ArtHub is to provide a secure and user-friendly online marketplace where artists can promote and sell their artwork while buyers can easily discover and purchase creative pieces. The project also demonstrates role-based authentication, secure payment integration, and dashboard management.
 
-### 🖼️ Artwork Marketplace
-- Browse all artworks publicly  
-- Search by title or artist  
-- Filter by category and price range  
-- Sort by newest and price  
-- Pagination support  
-- Artwork details page with full info  
+## 👥 Target Audience
 
----
+- Artists who want to showcase and sell their artwork.
+- Buyers looking for unique digital artwork.
+- Art enthusiasts who enjoy exploring creative collections.
 
-### 💳 Payment System (Stripe)
-- Stripe Checkout integration  
-- Artwork purchase system  
-- Subscription tiers (Free / Pro / Premium)  
-- Purchase validation before checkout  
-- Transaction tracking system  
+## 🚀 Deployment
+
+| Service | Platform |
+|---------|----------|
+| Client | Vercel |
+| Server | Vercel |
+| Database | MongoDB Atlas |
 
 ---
 
-### 💬 Comment System
-- Only buyers can comment (purchase-based access)  
-- Add / edit / delete own comments  
-- Secure backend validation  
-- Real-time comment updates  
+# ✨ Key Features
+
+- 🎭 **Role-based authentication** for Buyers, Artists, and Admins using Better Auth.
+- 💳 **Secure Stripe payment integration** for purchasing artwork.
+- 🖼️ **Advanced artwork browsing** with search, filtering, sorting, and pagination.
+- 💬 **Purchase-based comment system**, allowing only verified buyers to leave reviews.
+- 📊 **Interactive dashboards** with sales history, purchase history, and platform analytics.
+- 📈 **Real-time analytics** including revenue tracking, sales reports, and category distribution.
+- 🖼️ **Artwork upload and management** with image hosting support.
+- 📱 Fully responsive interface optimized for desktop, tablet, and mobile devices.
 
 ---
 
-### 📊 Dashboard System
+# 🔓 Public Pages
 
-#### 👤 User Dashboard
-- Purchase history  
-- Bought artworks gallery  
-- Subscription overview  
+The following pages are accessible without authentication:
 
-#### 🎨 Artist Dashboard
-- Manage artworks (CRUD)  
-- Sales history  
-- Upload artworks (imgBB)  
-
-#### 🛡️ Admin Dashboard
-- Manage users (role control)  
-- Manage artworks  
-- View all transactions  
-- Analytics dashboard  
+- 🏠 Home
+- 🎨 Browse Artworks
+- 📄 Artwork Details
+  
 
 ---
 
-### 📈 Analytics
-- Sales chart  
-- Category distribution pie chart  
-- Revenue tracking  
-- Platform insights  
+# 🔐 Protected Pages
+
+Authentication is required to access the following pages:
+
+### 👤 Buyer
+
+- Purchase History
+- Purchased Artworks
+- Subscription
+
+### 🎨 Artist
+
+- Dashboard
+- Add Artwork
+- Manage Artworks
+- Sales History
+
+### 🛡️ Admin
+
+- Dashboard
+- Manage Users
+- Manage Artworks
+- Transactions
 
 ---
 
-### 🎨 UI/UX Features
-- Fully responsive design  
-- Skeleton loading states  
-- Global error handling (404 + fallback UI)  
-- Clean modern UI with proper spacing  
-- Smooth navigation and routing  
+# 🛠️ Tech Stack
 
----
+## 🎨 Frontend
 
-## 🧰 Tech Stack
-
-### Frontend
 - Next.js (App Router)
 - React.js
 - Tailwind CSS
+- DaisyUI
 
-### Backend
+## ⚙️ Backend
+
 - Node.js
 - Express.js
-- MongoDB (Atlas)
-- JWT Authentication
+- MongoDB
+- Better Auth
+- JWT
 - Stripe API
 
-### Services
-- imgBB (Image Uploads)  
-- Stripe (Payments)  
-- Betterauth
+## 🔧 Tools & Services
+
+- MongoDB Atlas
+- imgBB
+- Stripe
+- Git
+- GitHub
+- Vercel
+- React Toastify
 
 ---
 
-## 📦 NPM Packages
+# 📦 Dependencies
 
-### Client Side
-- next
-- react
-- tailwindcss
-- react-toastify
+### Client
 
+```bash
+next
+react
+tailwindcss
+daisyui
+better-auth
+react-icons
+react-toastify
+framer-motion
+```
 
-### Server Side
-- express
-- mongodb
-- cors
-- dotenv
-- stripe
-- nodemon
+### Server
+
+```bash
+express
+mongodb
+better-auth
+jsonwebtoken
+stripe
+cors
+dotenv
+```
+
+---
+
+# ⚙️ Installation Guide
+
+## 1️⃣ Clone the Client Repository
+
+```bash
+git clone https://github.com/nnanjum1/arthub_client.git
+```
+
+Navigate to the project directory.
+
+```bash
+cd arthub_client
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Create a `.env.local` file and add the required environment variables.
+
+```env
+NEXT_PUBLIC_API_URL=your_api_url
+NEXT_PUBLIC_BASE_URL=your_base_url
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key
+NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_api_key
+```
+
+Start the development server.
+
+```bash
+npm run dev
+```
+
+The client will run on:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 2️⃣ Clone the Server Repository
+
+```bash
+git clone https://github.com/nnanjum1/arthub-server.git
+```
+
+Navigate to the project directory.
+
+```bash
+cd arthub-server
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Create a `.env` file and configure the required environment variables.
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+BETTER_AUTH_SECRET=your_better_auth_secret
+BETTER_AUTH_URL=http://localhost:5000
+STRIPE_SECRET_KEY=your_stripe_secret_key
+IMGBB_API_KEY=your_imgbb_api_key
+```
+
+Start the backend server.
+
+```bash
+npm start
+```
+
+The server will run on:
+
+```
+http://localhost:5000
+```
+
+---
+
+# 🚀 Live Demo
+
+🌐 **Live Website**
+
+https://arthub-client-hzjp.vercel.app
+
+---
+
+# 💻 Source Code
+
+### Client Repository
+
+https://github.com/nnanjum1/arthub_client
+
+### Server Repository
+
+https://github.com/nnanjum1/arthub-server
+
+---
+
+# 👨‍💻 Author
+
+**Najmun Nahar Anjum**
+
+🌐 Portfolio: https://professional-portfolio-omega-tan.vercel.app
+
+💻 GitHub: https://github.com/nnanjum1
+
+💼 LinkedIn: https://www.linkedin.com/in/najmunnaharanjum/
+
+📧 Email: najmunnanjum121@gmail.com
+
+---
+
+⭐ If you found this project helpful, consider giving it a star!
