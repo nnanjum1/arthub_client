@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
 
 const PurchaseHistory = () => {
 

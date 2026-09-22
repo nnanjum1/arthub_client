@@ -1,8 +1,8 @@
 
 "use client";
 
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
-import LoginCard from "@/app/components/Logincard";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
+import LoginCard from "@/app/(public)/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

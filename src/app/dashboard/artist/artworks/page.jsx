@@ -4,8 +4,8 @@ import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DeleteModal from "@/app/components/DeleteModal";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import DeleteModal from "@/app/(public)/components/DeleteModal";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
 import { useRouter } from "next/navigation";
 
 const ManageArtWorks = () => {

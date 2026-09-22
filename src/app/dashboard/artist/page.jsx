@@ -1,6 +1,6 @@
 "use client";
 
-import LoginCard from "@/app/components/Logincard";
+import LoginCard from "@/app/(public)/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";

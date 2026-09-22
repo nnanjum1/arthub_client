@@ -1,6 +1,6 @@
 "use client";
 
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useMemo, useState } from "react";
 

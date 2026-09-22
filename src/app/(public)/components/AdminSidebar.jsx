@@ -1,11 +1,5 @@
 "use client";
 
-
-
-
-
-"use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -19,10 +13,12 @@ import {
     FaPalette,
     FaUsers,
     FaTachometerAlt,
+    FaArrowLeft,
 } from "react-icons/fa";
 
 const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const pathname = usePathname();
+
 
     const menuItems = [
         {
@@ -45,10 +41,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             icon: <FaMoneyCheckAlt />,
             path: "/dashboard/admin/transactions",
         },
-
     ];
-
-
 
     return (
         <>
@@ -61,12 +54,13 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
             <aside
                 className={`
-                        fixed md:static top-0 left-0 min-h-screen
-                        w-72 bg-white border-r shadow-sm z-50
-                        transform transition-transform duration-300
-                        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                        md:translate-x-0
-                    `}
+                fixed top-0 left-0 h-screen
+                w-72 bg-white border-r shadow-sm z-50
+                flex flex-col
+                transform transition-transform duration-300
+                ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                md:translate-x-0
+            `}
             >
                 <div className="p-6 border-b flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-blue-700">
@@ -88,8 +82,8 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             href={item.path}
                             onClick={() => setSidebarOpen(false)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${pathname === item.path
-                                ? "bg-blue-600 text-white"
-                                : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                                    ? "bg-blue-600 text-white"
+                                    : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                                 }`}
                         >
                             {item.icon}
@@ -98,11 +92,20 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     ))}
                 </nav>
 
-
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
+                    <Link
+                        href="/"
+                        onClick={() => setSidebarOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition"
+                    >
+                        <FaArrowLeft />
+                        <span>Back to Home</span>
+                    </Link>
+                </div>
             </aside>
         </>
     );
-};
 
+};
 
 export default AdminSidebar;

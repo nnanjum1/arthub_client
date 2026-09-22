@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/app/components/Sidebar";
+import Sidebar from "@/app/(public)/components/Sidebar";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
-import LoginCard from "@/app/components/Logincard";
+import LoginCard from "@/app/(public)/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 
 export default function ArtistLayout({ children }) {

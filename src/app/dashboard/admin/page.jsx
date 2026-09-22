@@ -24,8 +24,8 @@ import {
 } from "recharts";
 
 import { authClient } from "@/lib/auth-client";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
-import LoginCard from "@/app/components/Logincard";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
+import LoginCard from "@/app/(public)/components/Logincard";
 
 const AdminDashboard = () => {
     const { data: session } = authClient.useSession();

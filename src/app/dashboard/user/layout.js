@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
-import UserSidebar from "@/app/components/UserSidebar";
+import UserSidebar from "@/app/(public)/components/UserSidebar";
 import { authClient } from "@/lib/auth-client";
-import LoginCard from "@/app/components/Logincard";
+import LoginCard from "@/app/(public)/components/Logincard";
 
 export default function UserLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);

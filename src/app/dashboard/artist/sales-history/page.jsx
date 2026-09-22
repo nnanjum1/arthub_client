@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import Logincard from "@/app/components/Logincard";
+import Logincard from "@/app/(public)/components/Logincard";
 
 const SalesHistory = () => {
     const { data: session } = authClient.useSession();

@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
 
 export default function ArtistProfile() {
     const { email } = useParams();

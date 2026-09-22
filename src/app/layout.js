@@ -1,8 +1,5 @@
 import "./globals.css";
 import { Inter, Playfair_Display } from "next/font/google";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
-import { ToastContainer } from "react-toastify";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,12 +17,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${inter.variable} ${playfair.variable}`}
     >
-      <body>
-        <NavBar />
-        {children}
-        <Footer />
-        <ToastContainer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

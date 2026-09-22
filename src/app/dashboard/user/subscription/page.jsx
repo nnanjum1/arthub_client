@@ -8,7 +8,7 @@ import {
     FaCrown,
     FaGem,
 } from "react-icons/fa";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
 
 const Subscription = () => {
     const { data: session } = authClient.useSession();

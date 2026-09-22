@@ -2,35 +2,36 @@
 
 import { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
-import AdminSidebar from "@/app/components/AdminSidebar";
-import LoginCard from "@/app/components/Logincard";
+import AdminSidebar from "@/app/(public)/components/AdminSidebar";
+import LoginCard from "@/app/(public)/components/Logincard";
 import { authClient } from "@/lib/auth-client";
 
 export default function AdminLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { data: session } = authClient.useSession();
-    console.log(session)
 
-    if (!session || session?.user?.role !== 'admin') {
+
+    if (!session || session?.user?.role !== "admin") {
         return (
             <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
                 <LoginCard />
             </div>
         );
     }
-    return (
-        <div className="min-h-screen flex bg-slate-50">
 
+    return (
+        <div className="h-screen overflow-hidden bg-slate-50">
+
+            {/* Sidebar */}
             <AdminSidebar
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
             />
 
-            <div className="flex-1 min-w-0">
+            {/* Right side - ONLY this area scrolls */}
+            <div className="md:ml-72 h-screen overflow-y-auto">
 
-
-
-
+                {/* Mobile Header */}
                 <div className="md:hidden p-4 border-b bg-white">
                     <button
                         onClick={() => setSidebarOpen(true)}
@@ -39,8 +40,6 @@ export default function AdminLayout({ children }) {
                         <span>Admin Panel</span>
                         <FaChevronRight />
                     </button>
-
-
                 </div>
 
                 <main className="p-6 overflow-x-hidden">
@@ -48,7 +47,8 @@ export default function AdminLayout({ children }) {
                 </main>
 
             </div>
-
         </div>
     );
+
+
 }

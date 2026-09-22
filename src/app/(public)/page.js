@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Banner from "./components/Banner";
 import TopArtists from "./components/TopArtists";
 import ArtCategories from "./components/ArtCategories";

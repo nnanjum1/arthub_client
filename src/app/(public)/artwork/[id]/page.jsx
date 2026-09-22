@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { authClient } from "@/lib/auth-client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import ArtworkSkeleton from "@/app/components/ArtworkSkeleton";
-import DeleteModal from "@/app/components/DeleteModal";
+import ArtworkSkeleton from "@/app/(public)/components/ArtworkSkeleton";
+import DeleteModal from "@/app/(public)/components/DeleteModal";
 
 const ArtworkDetails = () => {
     const { id } = useParams();
