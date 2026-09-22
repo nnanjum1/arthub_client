@@ -1,4 +1,3 @@
-"use client"
 import "./globals.css";
 import { Inter, Playfair_Display } from "next/font/google";
 import NavBar from "./components/NavBar";
@@ -17,16 +16,16 @@ const playfair = Playfair_Display({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-
-
+    <html
+      lang="en"
+      className={`${inter.variable} ${playfair.variable}`}
+    >
       <body>
         <NavBar />
         {children}
         <Footer />
         <ToastContainer />
       </body>
-
     </html>
   );
 }

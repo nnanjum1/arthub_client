@@ -120,7 +120,7 @@ const BrowseArtworks = () => {
 
 
     return (
-        <div className="w-[95%] mx-auto min-h-screen py-10">
+        <div className="w-[90%] mx-auto min-h-screen py-10">
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 

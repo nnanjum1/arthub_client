@@ -12,6 +12,7 @@ const ManageUsers = () => {
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const adminCount = users.filter(user => user.role === "admin").length;
 
     const fetchUsers = async () => {
         const { data: tokenData } = await authClient.token()
@@ -62,13 +63,12 @@ const ManageUsers = () => {
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/user/role/${email}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/user/role/${encodeURIComponent(email)}`,
                 {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        'authorization': `Bearer ${tokenData?.token}`
-
+                        authorization: `Bearer ${tokenData.token}`,
                     },
                     body: JSON.stringify({ role }),
                 }
@@ -184,11 +184,12 @@ const ManageUsers = () => {
 
                                     <select
                                         value={user.role}
+                                        disabled={
+                                            user.role === "admin" &&
+                                            adminCount === 1
+                                        }
                                         onChange={(e) =>
-                                            changeRole(
-                                                user.email,
-                                                e.target.value
-                                            )
+                                            changeRole(user.email, e.target.value)
                                         }
                                         className="select select-bordered select-sm"
                                     >
