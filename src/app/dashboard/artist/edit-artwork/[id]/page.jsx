@@ -143,29 +143,28 @@ const EditArtwork = () => {
     }
 
     return (
-        <div className="w-[90%] md:w-[70%] mx-auto py-10 bg-white p-6 rounded-xl shadow">
-
-            <h1 className="text-3xl font-bold mb-6">
+        <div className="w-[90%] mx-auto bg-white px-6 py-3 rounded-xl shadow">
+            <h1 className="text-2xl font-bold mb-3">
                 Edit Artwork
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-3">
 
                 <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full border rounded-lg px-4 py-3"
+                    className="w-full border rounded-lg px-4 py-2"
                     required
                 />
 
                 <textarea
                     name="description"
-                    rows="5"
+                    rows="3"
                     value={formData.description}
                     onChange={handleChange}
-                    className="w-full border rounded-lg px-4 py-3"
+                    className="w-full border rounded-lg px-4 py-2"
                     required
                 />
 
@@ -174,7 +173,7 @@ const EditArtwork = () => {
                     name="price"
                     value={formData.price}
                     onChange={handleChange}
-                    className="w-full border rounded-lg px-4 py-3"
+                    className="w-full border rounded-lg px-4 py-2"
                     required
                 />
 
@@ -182,7 +181,7 @@ const EditArtwork = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full border rounded-lg px-4 py-3"
+                    className="w-full border rounded-lg px-4 py-2"
                 >
                     <option value="Painting">Painting</option>
                     <option value="Digital Art">Digital Art</option>
@@ -195,7 +194,7 @@ const EditArtwork = () => {
                 <img
                     src={preview}
                     alt="Artwork Preview"
-                    className="w-48 h-48 object-cover rounded-lg border"
+                    className="w-40 h-40 object-cover rounded-lg border"
                 />
 
                 <input

@@ -259,13 +259,14 @@ const BrowseArtworks = () => {
                             key={index}
                             onClick={() => setCurrentPage(index + 1)}
                             className={`px-4 py-2 border rounded ${currentPage === index + 1
-                                ? "bg-teal-600 text-white"
-                                : "bg-white hover:bg-gray-100"
+                                ? "bg-teal-600 text-white  cursor-pointer "
+                                : "bg-white hover:bg-gray-100  cursor-pointer "
                                 }`}
                         >
                             {index + 1}
                         </button>
                     ))}
+
 
                     <button
                         onClick={() =>
@@ -274,10 +275,12 @@ const BrowseArtworks = () => {
                             )
                         }
                         disabled={currentPage === totalPages}
-                        className="px-4 py-2 border rounded disabled:opacity-50"
+                        className="px-4 py-2 border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Next
                     </button>
+
+
 
                 </div>
             )}

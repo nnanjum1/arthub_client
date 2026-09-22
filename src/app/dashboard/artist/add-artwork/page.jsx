@@ -126,9 +126,9 @@ const AddArtwork = () => {
         );
     }
     return (
-        <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
+        <div className="w-[90%] mx-auto bg-white px-6 py-3 rounded-xl shadow">
 
-            <h1 className="text-2xl font-bold mb-6">
+            <h1 className="text-2xl font-bold mb-3">
                 Add Artwork
             </h1>
 
@@ -159,7 +159,7 @@ const AddArtwork = () => {
 
                     <textarea
                         name="description"
-                        rows="4"
+                        rows="3"
                         required
                         className="w-full border rounded-lg px-4 py-3"
                     />
@@ -238,7 +238,7 @@ const AddArtwork = () => {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`px-6 py-3 rounded-lg text-white transition
+                    className={`px-6 py-2 rounded-lg text-white transition
         ${isSubmitting
                             ? "bg-gray-400 cursor-not-allowed"
                             : "bg-teal-600 hover:bg-teal-700"

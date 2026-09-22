@@ -1,83 +1,87 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-const slides = [
-    {
-        image: "/assets/art.jpg",
-        title: "Discover & Buy Original Art",
-        desc: "Explore unique digital and traditional artworks from talented artists.",
-    },
-    {
-        image: "/assets/heroo2.jpg",
-        title: "Own Unique Masterpieces",
-        desc: "Collect exclusive artworks and support global artists.",
-    },
-    {
-        image: "/assets/hero3.avif",
-        title: "Showcase Your Creativity",
-        desc: "Upload your art and reach thousands of buyers worldwide.",
-    },
-];
-
 export default function Hero() {
-    const [index, setIndex] = useState(0);
+    return (<section className="w-full bg-slate-50"> <div className="grid min-h-[75vh] grid-cols-1 md:grid-cols-2">
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setIndex((prev) => (prev + 1) % slides.length);
-        }, 4000);
 
-        return () => clearInterval(interval);
-    }, []);
+        {/* Text Side */}
+        <div className="flex items-center px-6 py-16 sm:px-10 lg:px-20">
+            <div className="max-w-xl">
 
-    return (
-        <div className="relative w-[90%] mx-auto h-[80vh] mb-5 overflow-hidden">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-teal-600">
+                    Art made with meaning
+                </p>
 
-            {slides.map((slide, i) => (
-                <div
-                    key={i}
-                    className={`absolute inset-0 transition-opacity duration-700 ${i === index
-                        ? "opacity-100 pointer-events-auto"
-                        : "opacity-0 pointer-events-none"
-                        }`}
-                >
+                <h1 className="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+                    Find art that
+                    <span className="text-teal-600"> feels like you.</span>
+                </h1>
 
-                    <div className="relative w-full h-full">
-                        <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            priority
-                            className="object-fill object-center"
-                        />
-                    </div>
+                <p className="mt-6 text-base leading-8 text-slate-600 sm:text-lg">
+                    Discover original artworks from independent artists
+                    and find something that makes your space, your
+                    collection, or simply your day a little more special.
+                </p>
 
-                    <div className="absolute inset-0 bg-black/60" />
-
-                    <div className="absolute inset-0 flex items-center justify-center text-center px-4">
-                        <div className="max-w-3xl text-white">
-                            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                                {slide.title}
-                            </h1>
-
-                            <p className="mt-4 text-lg md:text-xl text-gray-200">
-                                {slide.desc}
-                            </p>
-
-                            <Link
-                                href="/browse"
-                                className="inline-block mt-6 px-6 py-3 bg-teal-600 hover:bg-teal-700 rounded-md transition font-medium"
-                            >
-                                Browse Artworks
-                            </Link>
-                        </div>
-                    </div>
+                <div className="mt-8 flex flex-wrap gap-4">
+                    <Link
+                        href="/browse"
+                        className="rounded-md bg-teal-600 px-7 py-3.5 font-medium text-white transition hover:bg-teal-700"
+                    >
+                        Explore Artworks
+                    </Link>
 
                 </div>
-            ))}
+
+                <div className="mt-10 flex flex-wrap gap-8">
+                    <div>
+                        <p className="font-semibold text-slate-900">
+                            Original
+                        </p>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Unique pieces
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="font-semibold text-slate-900">
+                            Independent
+                        </p>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Real artists
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="font-semibold text-slate-900">
+                            Meaningful
+                        </p>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Stories behind art
+                        </p>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+        {/* Image Side */}
+        <div className="relative min-h-[420px] md:min-h-full">
+            <Image
+                src="/assets/art.jpg"
+                alt="Featured artwork"
+                fill
+                priority
+                className="object-cover object-center"
+            />
+        </div>
+
+    </div>
+    </section>
     );
+
+
 }
