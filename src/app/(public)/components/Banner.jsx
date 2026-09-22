@@ -29,7 +29,7 @@ export default function Hero() {
                 <div className="mt-8 flex flex-wrap gap-4">
                     <Link
                         href="/browse"
-                        className="rounded-md bg-teal-600 px-7 py-3.5 font-medium text-white transition hover:bg-teal-700"
+                        className="rounded-md bg-teal-600 px-7 py-3.5 font-medium text-white transition hover:bg-teal-700 cursor-pointer"
                     >
                         Explore Artworks
                     </Link>
