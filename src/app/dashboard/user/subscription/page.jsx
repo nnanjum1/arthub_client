@@ -110,7 +110,7 @@ const Subscription = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="w-[95%] mx-auto">
             <div className="mb-10">
                 <h1 className="text-3xl font-bold text-slate-800">
                     Subscription Plans
