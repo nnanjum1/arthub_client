@@ -10,26 +10,27 @@ export default function UserLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const { data: session } = authClient.useSession();
-    console.log(session)
 
-    if (!session || session?.user?.role !== 'user') {
+    if (!session || session?.user?.role !== "user") {
         return (
             <div className="w-[90%] mx-auto bg-white p-6 rounded-xl shadow">
                 <LoginCard />
             </div>
         );
     }
+
     return (
-        <div className="min-h-screen flex bg-slate-50">
+        <div className="h-screen overflow-hidden bg-slate-50">
 
             <UserSidebar
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
             />
 
-            <div className="flex-1 min-w-0">
+            {/* Dashboard content */}
+            <div className="md:ml-72 h-screen overflow-y-auto">
 
-
+                {/* Mobile top button */}
                 <div className="md:hidden p-4 border-b bg-white">
                     <button
                         onClick={() => setSidebarOpen(true)}
